@@ -10,14 +10,13 @@
            
         </div>
 
-        <form method="POST" >
-            @csrf
-
+<form method="POST" action="{{ route('update-password.submit') }}">
+   @csrf
             <div class="flex justify-between gap-2 mb-6">
                 @for ($i = 0; $i < 4; $i++)
                     <input 
                         type="text"
-                        name="otp[]"
+                        name="code[]"
                         maxlength="1"
                         placeholder="-"
                         class="w-12 h-12 bg-gray-200  text-center text-xl font-semibold border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
@@ -36,10 +35,10 @@
 
         <div class="text-center mt-6">
             <p class="text-sm text-gray-500">
-                <a href="" class="text-green-700 font-semibold hover:underline">
+                <p class="text-green-700 font-semibold hover:underline">
              Did not get the code? 
                     
-                </a>
+                </p>
                 Resend the code in 59 secs
             </p>
             

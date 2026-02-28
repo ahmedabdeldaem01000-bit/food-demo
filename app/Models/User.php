@@ -64,5 +64,8 @@ class User extends Authenticatable
 {
     return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
 }
-
+public function routeNotificationForVonage()
+{
+    return $this->phone;
+}
 }

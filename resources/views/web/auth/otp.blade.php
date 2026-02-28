@@ -11,15 +11,24 @@
                 +20 1xxxxxxxx
             </p>
         </div>
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-        <form method="POST" >
+        <form method="POST"  action="{{ route('otp.verify') }}">
             @csrf
 
             <div class="flex justify-between gap-2 mb-6">
                 @for ($i = 0; $i < 4; $i++)
                     <input 
                         type="text"
-                        name="otp[]"
+                        name="code[]"
                         maxlength="1"
                         placeholder="-"
                         class="w-12 h-12 bg-gray-200  text-center text-xl font-semibold border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"

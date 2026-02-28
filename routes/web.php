@@ -1,27 +1,48 @@
 <?php
 
-// use App\Http\Controllers\web\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
-use pp\Http\Controllers\web\Auth\AuthController;
-
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\web\Auth\AuthController;
 
 Route::controller(AuthController::class)->group(function () {
 
-    Route::get('login', 'showLogin')->name('login');
-    Route::post('login', 'login')->name('login.submit');
+    // ================= Public =================
+    Route::get('home', 'showHome')->name('home.show');
 
-    Route::get('register', 'showRegister')->name('register');
+    // ================= Auth Actions =================
+    Route::post('login', 'login')->name('login.submit');
+    Route::post('logout', 'logout')->middleware('auth')->name('logout');
+
     Route::post('register', 'register')->name('register.submit');
 
-    Route::post('send-otp', 'sendOtp')->name('otp.send');
+    // ================= Guest Only =================
+    Route::middleware('guest')->group(function () {
 
-    Route::get('otp', 'showOtp')->name('otp.form');
-    Route::post('verify-otp', 'verifyOtp')->name('otp.verify');
+        Route::get('login', 'showLogin')->name('login.show');
+        Route::get('register', 'showRegister')->name('register.show');
 
-    Route::post('logout', 'logout')->name('logout');
+        Route::get('show-otp', 'showOtp')->name('otp.showOtp');
+        Route::post('verify-otp', 'verify')->name('otp.verify');
+
+
+    });
+
+    // ================= Password Reset (Auth + OTP Verified) =================
+    Route::middleware(['auth','check.otp'])->group(function () {
+                Route::get('forget-password', 'showForgetPassword')->name('forget-password.show');
+        Route::post('otp-forget-password', 'otpForgetPassword')->name('otp-forget-password.submit');
+
+
+        Route::get('otp-reset-password', 'otpResetPassword')->name('otp-reset-password.show');
+
+        Route::get('new-password', 'newPassword')->name('new-password.show');
+        Route::post('update-new-password', 'updateNewPassword')->name('update-new-password.submit');
+
+        Route::post('update-password', 'updatePassword')->name('update-password.submit');
+    });
+    
+        Route::middleware('auth')->group(function () {
+                 Route::get('forget-password', 'showForgetPassword')->name('forget-password.show');
+        Route::post('otp-forget-password', 'otpForgetPassword')->name('otp-forget-password.submit');
+    });
+
 });
-
-// Route::get('/', fn() => view('home'))->middleware('auth')->name('home');
