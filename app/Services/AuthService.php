@@ -28,12 +28,13 @@ class AuthService
             ]
         );
         Mail::to($data['email'])->queue(new OtpMail($code));
+
     }
 
-public function verifyOtp(array $data): User
+    public function verifyOtp(array $data): User
     {
         $data['code'] = implode('', $data['code']);
-      
+
         $otp = Otp::where('code', $data['code'])
             ->where('expires_at', '>', now())
             ->first();
@@ -52,7 +53,7 @@ public function verifyOtp(array $data): User
 
             // إعطاء المستخدم الدور الافتراضي بمجرد إنشائه
             // يمكنك تغيير 'user' إلى اسم الدور الذي تستخدمه في نظامك مثل 'customer' أو 'client'
-            $user->assignRole('user'); 
+            $user->assignRole('user');
 
             $otp->delete();
 
@@ -65,36 +66,36 @@ public function verifyOtp(array $data): User
 
 
 
-       public function sendOtpPassword(array $data): void
+    public function sendOtpPassword(array $data): void
     {
-    // dd($data);
+      
 
         $code = random_int(1000, 9999);
-        $user= User::where('email', $data['email'])->first();
-if(!$user){
-    throw new \Exception('User not found');
-}
+        $user = User::where('email', $data['email'])->first();
+        if (!$user) {
+            throw new \Exception('User not found');
+        }
         Otp::updateOrCreate(
             ['email' => $data['email']],
             [
                 'phone' => $user['phone'],
                 'email' => $user['email'],
                 'name' => $user['name'],
-                          'password' => Hash::make($user['password']),
+                'password' => Hash::make($user['password']),
 
                 'code' => $code,
                 'expires_at' => Carbon::now()->addMinutes(10),
             ]
         );
         Mail::to($data['email'])->queue(new OtpMail($code));
- 
+
     }
 
 
-public function verifyOtpPassword(array $data): User
+    public function verifyOtpPassword(array $data): User
     {
         $data['code'] = implode('', $data['code']);
-      
+
         $otp = Otp::where('code', $data['code'])
             ->where('expires_at', '>', now())
             ->first();
@@ -102,16 +103,16 @@ public function verifyOtpPassword(array $data): User
         if (!$otp) {
             throw new \Exception('Invalid or expired OTP');
         }
-$user = User::where('email', $otp->email)->first();
-    
+        $user = User::where('email', $otp->email)->first();
+
         return DB::transaction(function () use ($otp, $user) {
-         $user->update([
-    'password' => bcrypt($otp->password),
-]);
+            $user->update([
+                'password' => bcrypt($otp->password),
+            ]);
 
 
-        
-           
+
+
 
             return $user;
         });

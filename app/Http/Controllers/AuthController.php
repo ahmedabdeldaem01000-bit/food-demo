@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\VerifyOtpRequest;
+use App\Models\Otp;
 use App\Models\User;
 use App\Services\AuthService;
 use Hash;
@@ -18,6 +19,12 @@ class AuthController extends Controller
         public function __construct(private AuthService $authService) {}
  
 
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
+    }
     public function verifyOtp(VerifyOtpRequest $request)
     {
          $user = $this->authService->verifyOtp($request->validated());
@@ -25,7 +32,7 @@ class AuthController extends Controller
         auth()->login($user); 
         return response()->json([
             'success' => true,
-            'message' => 'OTP verified. Please enter your details.',
+            'message' => 'OTP verified. User registered successfully.',
             'email' => $user->email
         ]);
     }
@@ -37,10 +44,11 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
                $this->authService->sendOtp($request->validated());
+               $code=Otp::where('email', $request->email)->first()->code;
         return response()->json([
             'success' => true,
-            'message' => 'User registered successfully.',
-             
+            'message' => 'Please check your email for the OTP code.',
+            'code' => $code
         ]);
     }
 
@@ -66,7 +74,8 @@ class AuthController extends Controller
             'success' => true,
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user
+            'user' => $user,
+            'role' =>$user->getRoleNames()->first(),
         ]);
     }
 

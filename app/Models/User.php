@@ -12,22 +12,22 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-   use HasApiTokens, HasFactory, Notifiable    ,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-  protected $fillable = [
-    'name',
-    'email',
-    'phone',
-    'password',
-    'address',
-    'birth_date',
-    'photo',
-];
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'password',
+        'address',
+        'birth_date',
+        'photo',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,20 +52,28 @@ class User extends Authenticatable
         ];
     }
     public function role()
-{
-    return $this->belongsTo(Role::class);
-}
-         public function order()
+    {
+        return $this->belongsTo(Role::class);
+    }
+    public function order()
     {
         return $this->hasMany(Order::class);
     }
 
     public function favorites()
-{
-    return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
-}
-public function routeNotificationForVonage()
-{
-    return $this->phone;
-}
+    {
+        return $this->belongsToMany(Product::class, 'favorites')
+            ->using(Favorite::class) // إخبار لارافل باستخدام الموديل الوسيط
+            ->withTimestamps();
+    }
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
+    public function routeNotificationForVonage()
+    {
+
+        return $this->phone;
+    }
 }

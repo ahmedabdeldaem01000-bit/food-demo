@@ -17,7 +17,6 @@ return new class extends Migration {
     $table->string('currency')->default('usd');
     $table->string('status')->default('pending');
     $table->string('stripe_session_id')->nullable();
-    $table->foreignId('product_id')->constrained()->onDelete('cascade');
     $table->timestamps();
 
         });

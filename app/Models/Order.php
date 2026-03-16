@@ -32,4 +32,21 @@ class Order extends Model
         return $this->hasMany(Payment::class);
     }
     
+        public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    // لو عايز تجيب المنتجات مباشرة من OrderItems
+    public function products()
+    {
+        return $this->hasManyThrough(
+            Product::class,      // الجدول النهائي
+            OrderItem::class,    // الجدول الوسيط
+            'order_id',          // foreign key في OrderItem يشير لـ Order
+            'id',                // key في Product
+            'id',                // local key في Order
+            'product_id'         // local key في OrderItem
+        );
+    }
 }

@@ -23,7 +23,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        // dd('dddd');
+       
         $this->authService->sendOtp($request->validated());
 
         return redirect()->route('otp.showOtp')
@@ -44,7 +44,7 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-            return redirect()->route('home.show');
+            return redirect()->route('home.index');
         }
 
         return back()->withErrors([
@@ -78,7 +78,7 @@ class AuthController extends Controller
     }
     public function showHome()
     {
-        return view('web.home.index');
+        return view('web.home.index.index');
     }
 
 
@@ -91,7 +91,7 @@ class AuthController extends Controller
 
         auth()->login($user);
 
-        return redirect()->route('home.show');
+        return redirect()->route('home.index');
     }
     // -----------------------------------------------------------
 // -----------------------------------------------------------

@@ -17,18 +17,19 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-       return [
-         'name' => $this->faker->word(),
-            'kcal' => $this->faker->randomNumber(3),
-            'review' => $this->faker->numberBetween(1, 5),
-            'ingredients' => $this->faker->words(3, true),
-            'description' => $this->faker->sentence(),
-            'price' => $this->faker->randomFloat(2, 10, 500),
-            'category_id' => Category::factory(), // ينشئ Category جديد ويربطه
-            'image' => 'hero.jpg',
-
-           
-            
-        ];
+  return [
+        'name'        => $this->faker->word(),
+        'kcal'        => $this->faker->randomNumber(3),
+        'review'      => $this->faker->numberBetween(1, 5),
+        // نبعتها مصفوفة عشان تتوافق مع الـ Cast والـ Validation بتاعك
+        'ingredients' => [
+            ['name' => $this->faker->word()],
+            ['name' => $this->faker->word()],
+        ],
+        'description' => $this->faker->sentence(),
+        'price'       => $this->faker->randomFloat(2, 10, 500),
+        'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
+        'image'       => 'images/image6.jpg',
+    ];
     }
 }

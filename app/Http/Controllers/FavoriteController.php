@@ -2,50 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Services\UserService;
 
 class FavoriteController extends Controller
 {
-    // ✅ عرض قائمة المفضلة
+
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index()
     {
-        $user = Auth::user();
-
-        $favorites = $user->favorites()->get();
-
         return response()->json([
             'status' => 'success',
-            'data' => $favorites,
+            'data' => $this->userService->getFavorites()
         ]);
     }
 
-    // ✅ إضافة منتج للمفضلة
     public function store($productId)
     {
-        $user = Auth::user();
-
-        $product = Product::findOrFail($productId);
-
-        $user->favorites()->syncWithoutDetaching([$product->id]);
+        $this->userService->addFavorite($productId);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Product added to favorites.',
+            'message' => 'Product added to favorites.'
         ]);
     }
 
-    // ✅ إزالة منتج من المفضلة
     public function destroy($productId)
     {
-        $user = Auth::user();
-
-        $user->favorites()->detach($productId);
+        $this->userService->removeFavorite($productId);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Product removed from favorites.',
+            'message' => 'Product removed from favorites.'
         ]);
     }
 }

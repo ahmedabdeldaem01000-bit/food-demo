@@ -20,7 +20,7 @@ class OrderFactory extends Factory
     {
          return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'product_id' => Product::inRandomOrder()->first()->id,
+            // 'product_id' => Product::inRandomOrder()->first()->id,
             'amount' => $this->faker->numberBetween(1, 5),
             'currency' => 'USD',
             'status' => $this->faker->randomElement(['pending', 'completed', 'canceled']),

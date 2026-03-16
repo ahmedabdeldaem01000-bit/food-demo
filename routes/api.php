@@ -22,7 +22,11 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 Route::post('/forgot-password', [ForgetPasswordController::class, 'forgotPassword']);
 Route::post('/verify-reset-otp', [ForgetPasswordController::class, 'verifyResetOtp']);
-Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
+Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
+    Route::post('logout', [AuthController::class, 'logout']);
+      });
 
 
 
@@ -32,7 +36,7 @@ Route::get('/categories/{id}/products', [ProductController::class, 'productsByCa
 
 
 // User routes
-Route::middleware(['auth:sanctum', RoleMiddleware::class . ':2,1'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
 
 
     Route::post('/paypal/create-payment', [PaypalController::class, 'createPayment']);
@@ -42,9 +46,9 @@ Route::middleware(['auth:sanctum', RoleMiddleware::class . ':2,1'])->group(funct
     Route::post('/user/fcm-token', [UserController::class, 'storeFcmToken']);
 
 
-    Route::get('/profile/{id}', [UserProfileController::class, 'profilePage']);
-    Route::get('/profile/{id}', [UserProfileController::class, 'personal']);
-    Route::get('/profile-order/{id}', [UserProfileController::class, 'userOrder']);
+    Route::get('/profile', [UserProfileController::class, 'profilePage']);
+    Route::post('/update-profile', [UserProfileController::class, 'personalEdit']);
+    Route::get('/profile-order', [UserProfileController::class, 'userOrder']);
     Route::get('/notifications', [NotificationController::class, 'index'])->middleware('auth:sanctum');
 
 
@@ -59,11 +63,12 @@ Route::middleware(['auth:sanctum', RoleMiddleware::class . ':2,1'])->group(funct
 
 
 
-// Admin routes
-Route::middleware(['auth:sanctum', RoleMiddleware::class . ':1'])->group(function () {
+// Admin routesRoute::middleware(['auth:sanctum', RoleMiddleware::class . ':admin'])
+// Route::middleware(['auth:sanctum', RoleMiddleware::class . ':1'])->group(function () {
+Route::middleware(['auth:sanctum', RoleMiddleware::class . ':admin'])->group(function () {
+    Route::delete('/delete-product/{id}', [ProductController::class, 'destroy']);
     Route::post('/add-products', [ProductController::class, 'store']);
     Route::post('/update-product/{product}', [ProductController::class, 'update']);
-    Route::delete('/delete-product/{id}', [ProductController::class, 'destroy']);
     Route::post('/add-category', [CategoryController::class, 'store']);
     Route::delete('/delete-category/{id}', [CategoryController::class, 'destroy']);
     Route::post('/update-category/{category}', [CategoryController::class, 'update']);

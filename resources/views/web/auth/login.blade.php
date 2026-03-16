@@ -1,7 +1,8 @@
 @extends('web.app')
 @section('content')
 
-<form action="{{ route('login.submit') }}" method="POST" class="p-4 flex flex-col flex-wrap content-center justify-center w-full items-start md:w-100 md:border md:border-green-800 md:rounded-[15px] md:justify-between  md:h-100 md:p-8">
+<div class="w-full flex flex-wrap flex-row justify-center items-center content-center ">
+    <form action="{{ route('login.submit') }}" method="POST" class="p-4 flex flex-col flex-wrap content-center justify-center w-full items-start md:w-100 md:border md:border-green-800 md:rounded-[15px] md:justify-between  md:h-100 md:p-8">
   @csrf
    @if ($errors->any())
       <div class="w-full p-3 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
@@ -34,5 +35,6 @@
   <button type="submit" class="border-none bg-[#065e21] text-white w-full py-2 rounded-md my-4">Login</button>
   <a href="{{ route('register.show') }}" class="text-center w-full">Don't have an account? <span class="underline text-red-600 font-bold">Sign up</span></a>
 </form>
+</div>
 
 @endsection()
