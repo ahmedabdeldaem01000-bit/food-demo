@@ -66,7 +66,7 @@
                 <p class="md:hidden flex"> <i class="fa-regular fa-heart"></i></p>
                 <a href="{{ route('favorite.showFavorite') }}">Favorite</a>
             </li>
-        @endauth
+   
 
 
     </ul>
@@ -75,8 +75,10 @@
         <a href="{{ route('get-cart.index') }}"><i class="fa-solid fa-cart-shopping"></i> <span class="cart-count">
 {{ $cartCount }}
 </span></a>
-      <a href="{{ route('profile.notificationShow') }}">
-          <i class="fa-solid fa-bell"></i>
-      </a>
+        <a href="{{ route('notification.index') }}"><i class="fa-regular fa-bell"></i><span class="cart-count">
+{{ $unreadCount }}
+</span></a>
+   
     </div>
+         @endauth
 </div>

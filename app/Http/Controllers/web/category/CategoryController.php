@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\web\category;
+namespace App\Http\Controllers\web\Category;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -37,12 +37,12 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
-    {
-         $products = $category->products()->with('category')->get();
-
+   public function show(Category $category)
+{
+    $products = $category->products;
+        
     return view('web.shop.index', compact('category', 'products'));
-    }
+}
 
     /**
      * Show the form for editing the specified resource.

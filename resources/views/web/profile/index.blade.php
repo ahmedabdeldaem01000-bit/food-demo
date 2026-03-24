@@ -21,13 +21,7 @@
                 <li>Personal information</li>
                 <li><i class="fa-solid fa-arrow-right-from-bracket"></i></li>
             </ul></a>
-         <a href="{{ route('profile.notificationShow') }}">
-               <ul class="flex flex-wrap flex-row items-center justify-between content-start gap-2">
-                <li><i class="fa-solid fa-bell"></i></li>
-                <li>Notifications</li>
-                <li><i class="fa-solid fa-arrow-right-from-bracket"></i></li>
-            </ul>
-         </a>
+     
             <a href="{{ route('profile.showOrders') }}">
                 <ul class="flex flex-wrap flex-row items-center justify-between content-center gap-2">
                 <li><i class="fa-solid fa-utensils"></i></li>

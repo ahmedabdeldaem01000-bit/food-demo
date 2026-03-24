@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProductFactory extends Factory
 {
+    
     /**
      * Define the model's default state.
      *
@@ -21,6 +22,7 @@ class ProductFactory extends Factory
         'name'        => $this->faker->word(),
         'kcal'        => $this->faker->randomNumber(3),
         'review'      => $this->faker->numberBetween(1, 5),
+        'slug'      => $this->faker->paragraph(),
         // نبعتها مصفوفة عشان تتوافق مع الـ Cast والـ Validation بتاعك
         'ingredients' => [
             ['name' => $this->faker->word()],
@@ -28,7 +30,8 @@ class ProductFactory extends Factory
         ],
         'description' => $this->faker->sentence(),
         'price'       => $this->faker->randomFloat(2, 10, 500),
-        'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
+    //   'category_id' => fn() => Category::inRandomOrder()->value('id') ?? Category::factory(),
+        
         'image'       => 'images/image6.jpg',
     ];
     }

@@ -46,7 +46,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    // dd($id);
+ 
 public function show(Product $product)
 {
     $product->load('category');
@@ -89,18 +89,18 @@ public function show(Product $product)
 
     
 
-    public function add(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id'
-        ]);
+    // public function add(Request $request)
+    // {
+    //     $request->validate([
+    //         'product_id' => 'required|exists:products,id'
+    //     ]);
 
-        $this->cartService->add(
-            auth()->id(),
-            $request->product_id
-        );
+    //     $this->cartService->add(
+    //         auth()->id(),
+    //         $request->product_id
+    //     );
 
-        return back()->with('success','Product added to cart');
-    }
+    //     return back()->with('success','Product added to cart');
+    // }
       
 }

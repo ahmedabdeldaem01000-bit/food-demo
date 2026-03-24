@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\web\payment;
+namespace App\Http\Controllers\web\Payment;
 
 use App\Http\Controllers\Controller;
 use App\Services\Payment\PaypalService;
@@ -12,8 +12,7 @@ class PaypalController extends Controller
     protected $paypalService;
 
     public function __construct(PaypalService $paypalService)
-    {
-        $this->paypal=
+    { 
         $this->paypalService = $paypalService;
     }
 

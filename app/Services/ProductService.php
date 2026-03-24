@@ -8,20 +8,18 @@ use App\Models\Product;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
+ 
 use Exception;
 class ProductService
 {
-    private const CACHE_TAG = 'category';
-    private const Category_KEY = 'category_page_data';
+   
     public function CategoryPage($data)
     {
-        return Cache::tags([self::CACHE_TAG])
-            ->remember(self::Category_KEY, 600, function () {
+   
                 return [
                     'category_typ' => $this->CategoryById(1),
                 ];
-            });
+           
 
     }
     public function CategoryById($data)
@@ -102,9 +100,8 @@ public function updateProduct($request, Product $product)
 
         $product->update($data);
 
-        // مسح الكاش الخاص بالمنتج فقط
-        Cache::forget("product_{$product->id}");
-        Cache::forget("products_list");
+        
+ 
 
         DB::commit();
 
@@ -138,8 +135,7 @@ public function createProduct($request)
 
         $product = Product::create($data);
 
-        // امسح كاش قائمة المنتجات بس
-        Cache::forget('products_list');
+   
 
         DB::commit();
 
@@ -159,8 +155,5 @@ public function createProduct($request)
     }
 }
     // 
-    public function clearProductCache(): void
-    {
-        Cache::tags([self::CACHE_TAG])->flush();
-    }
+ 
 }

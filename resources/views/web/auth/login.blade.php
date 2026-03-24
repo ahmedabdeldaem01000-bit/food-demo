@@ -29,7 +29,7 @@
           <input type="checkbox" name="remember">
           <label for="remember">Remember me</label>
       </div>
-      <a href="" class="text-red-500 font-semibold">Forget your Password?</a>
+      <a href="{{ route('forget-password.show') }}" class="text-red-500 font-semibold">Forget your Password?</a>
   </div>
   
   <button type="submit" class="border-none bg-[#065e21] text-white w-full py-2 rounded-md my-4">Login</button>

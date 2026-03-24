@@ -4,8 +4,11 @@ namespace App\Providers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\Product;
 use App\Observers\OrderObserver;
+use App\Observers\ProductObserver;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,18 +25,33 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
-         Order::observe(OrderObserver::class);
+{
+    // Order::observe(OrderObserver::class);
+ Product::observe(ProductObserver::class);
     View::composer('*', function ($view) {
 
-        $count = 0;
+        $cartCount = 0;
+        $unreadCount = 0;
 
-        if(auth()->check()){
-            $count = Cart::where('user_id', auth()->id())->count();
+        if (auth()->check()) {
+            $userId = auth()->id();
+
+            // cart count
+            $cartCount = \App\Models\Cart::where('user_id', $userId)->count();
+
+            // unread notifications count
+       $unreadCount = \App\Models\Notification::leftJoin('notification_reads', function ($join) use ($userId) {
+    $join->on('notifications.id', '=', 'notification_reads.notification_id')
+         ->where('notification_reads.user_id', '=', $userId);
+})
+->whereNull('notification_reads.id')
+->count();
         }
 
-        $view->with('cartCount', $count);
+        $view->with([
+            'cartCount' => $cartCount,
+            'unreadCount' => $unreadCount,
+        ]);
     });
-        
-    }
+}
 }

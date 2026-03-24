@@ -18,12 +18,18 @@ class ProductSeeder extends Seeder
 $images = collect(File::files(public_path('images/products')))
             ->map(fn($img) => 'images/products/'.$img->getFilename());
 
-Product::factory(100)->create()->each(function ($product) use ($images) {
+if (Category::count() === 0) {
+            Category::factory(5)->create();
+        }
 
-    $product->update([
-        'image' => $images->random()
-    ]);
 
-});
+        $categories = Category::pluck('id');
+        for ($i = 0; $i < 100; $i++) {
+            Product::factory()->create([
+                'category_id' => $categories->random(), // بيختار قسم عشوائي
+                'image'       => $images->random(),     // بيختار صورة عشوائية
+            ]);
+        }
+ 
     }
 }

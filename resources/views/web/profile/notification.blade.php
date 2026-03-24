@@ -1,68 +1,25 @@
 @extends('web.app')
 @section('page-title')
-    Notification
+    my orders
 @endsection
+
 @section('content')
-<div class="max-w-md mx-auto bg-gray-100 min-h-screen p-5 mt-32">
-
-    <!-- Today -->
-    <h2 class="text-lg font-semibold mb-4">Today</h2>
-
-    <div class="space-y-5">
-
-        <div class="flex items-start gap-3">
-            <img src="{{ asset('images/image1.jpg') }}" 
-                 class="w-12 h-12 rounded-full object-cover">
-
-            <p class="text-gray-700 text-sm leading-relaxed">
-                Your meal is on the way! 🚚 Expected delivery: 20 minutes.
-            </p>
-        </div>
-
-        <div class="flex items-start gap-3">
-            <img src="{{ asset('images/image2.jpg') }}" 
-                 class="w-12 h-12 rounded-full object-cover">
-
-            <p class="text-gray-700 text-sm leading-relaxed">
-                Order received ✅ Thanks for choosing Foodify ❤️
-            </p>
-        </div>
-
-    </div>
-
-    <!-- Last Week -->
-    <h2 class="text-lg font-semibold mt-10 mb-4">Last Week</h2>
-
-    <div class="space-y-5">
-
-        <div class="flex items-start gap-3">
-            <img src="{{ asset('images/image3.jpg') }}" 
-                 class="w-12 h-12 rounded-full object-cover">
-
-            <p class="text-gray-700 text-sm leading-relaxed">
-                Did you know? Avocados are a great source of healthy fats 🥑
-            </p>
-        </div>
-
-        <div class="flex items-start gap-3">
-            <img src="{{ asset('images/image4.jpg') }}" 
-                 class="w-12 h-12 rounded-full object-cover">
-
-            <p class="text-gray-700 text-sm leading-relaxed">
-                Swap idea: Replace sugary drinks with fresh juice 🍊
-            </p>
-        </div>
-
-        <div class="flex items-start gap-3">
-            <img src="{{ asset('images/image5.jpg') }}" 
-                 class="w-12 h-12 rounded-full object-cover">
-
-            <p class="text-gray-700 text-sm leading-relaxed">
-                Tip of the day: Add more colorful veggies — more colors = more nutrients 🌈
-            </p>
-        </div>
-
-    </div>
-
+<div class="p-4 flex flex-wrap items-center justify-center content-center w-full gap-4 mt-8 h-screen">
+    @foreach($notifications as $notification)
+<a class="flex items-start justify-center flex-wrap flex-col w-48 gap-4  bg-white shadow-md rounded-2xl p-4"  href="{{ route('product.show',$notification->product_id) }} ">
+    <img src="{{ asset("storage/".$notification->image ?? 'images/default.jpg') }}" 
+         class="w-12 h-12 rounded-full object-cover">
+ 
+    <p class="text-black text-sm leading-relaxed">
+        {{ $notification->body ?? 'New notification' }}
+    </p>
+    <p class="text-black text-sm leading-relaxed">
+        {{ $notification->description ?? 'New notification' }}
+    </p>
+    <p class="text-black text-sm leading-relaxed">
+        {{ $notification->created_at ?? 'New notification' }}
+    </p>
+</a>
+@endforeach
 </div>
 @endsection

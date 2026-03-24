@@ -29,6 +29,7 @@ class FirebaseChannel
                 ->withNotification(FcmNotification::create($data['title'], $data['body']))
         );
     }
+    
     /**
      * Authenticate the user's access to the channel.
      */

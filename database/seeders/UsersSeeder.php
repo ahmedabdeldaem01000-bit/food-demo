@@ -13,19 +13,32 @@ class UsersSeeder extends Seeder
      */
      public function run(): void
     {
-        // Admin واحد ثابت
       
-         $user = User::create([
+         $admin = User::create([
             'name' => 'Admin User',
             'email' => 'admain@example.com',
             'phone' => '01155987452',
             'birth_date' => null,
             'address' => 'address is giza',
             'password' => bcrypt('password'),
-        ]);
+        ],
+        
+        );
+      
+         $user = User::create([
+            'name' => 'Admin User',
+            'email' => 'xooahmedoox21@gmail.com',
+            'phone' => '01155985452',
+            'birth_date' => null,
+            'address' => 'address is giza',
+            'password' => bcrypt('password'),
+        ],
+        
+        );
 
         // اسناد رول
-        $user->assignRole('admin');
+        $admin->assignRole('admin');
+        $user->assignRole('user');
 
         // مستخدمين عاديين
         User::factory(10)->create();

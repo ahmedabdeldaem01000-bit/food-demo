@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\web\profile;
+namespace App\Http\Controllers\web\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;

@@ -49,8 +49,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+             'notifications' => 'collection',
         ];
     }
+ 
     public function role()
     {
         return $this->belongsTo(Role::class);
@@ -76,4 +78,10 @@ class User extends Authenticatable
 
         return $this->phone;
     }
+
+
+    public function notificationReads()
+{
+    return $this->hasMany(NotificationRead::class);
+}
 }

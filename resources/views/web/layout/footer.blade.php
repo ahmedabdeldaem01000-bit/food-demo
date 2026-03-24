@@ -47,6 +47,6 @@
 
    <!-- أي سكربت إضافي -->
     @stack('script')
-
+<livewire:scripts />
 </body>
 </html>

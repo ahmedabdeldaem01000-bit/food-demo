@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Services\AuthService;
 use Hash;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Twilio\Exceptions\RestException;
 use Twilio\Rest\Client;
 
