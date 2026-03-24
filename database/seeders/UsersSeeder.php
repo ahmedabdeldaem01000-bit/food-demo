@@ -25,20 +25,20 @@ class UsersSeeder extends Seeder
         
         );
       
-         $user = User::create([
-            'name' => 'Admin User',
-            'email' => 'xooahmedoox21@gmail.com',
-            'phone' => '01155985452',
-            'birth_date' => null,
-            'address' => 'address is giza',
-            'password' => bcrypt('password'),
-        ],
+        //  $user = User::create([
+        //     'name' => 'Admin User',
+        //     'email' => 'xooahmedoox21@gmail.com',
+        //     'phone' => '01155985452',
+        //     'birth_date' => null,
+        //     'address' => 'address is giza',
+        //     'password' => bcrypt('password'),
+        // ],
         
-        );
+        // );
 
         // اسناد رول
         $admin->assignRole('admin');
-        $user->assignRole('user');
+        // $user->assignRole('user');
 
         // مستخدمين عاديين
         User::factory(10)->create();

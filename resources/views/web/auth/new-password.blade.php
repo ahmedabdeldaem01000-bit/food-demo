@@ -29,6 +29,7 @@
             </label>
             <input type="password" placeholder="Re-enter Your password" name="password_confirmation"
                 class=" w-full border rounded-md p-2 mt-2 outline-none border-[#cfcfcf]">
+              <input type="hidden" name="user_id" value="{{ $userId }}"/>
         </div>
         <button class="border-none bg-[#065e21] text-white w-full py-2 rounded-md my-4" type="submit">Continue</button>
        </div>

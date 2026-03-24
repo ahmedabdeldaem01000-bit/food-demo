@@ -105,16 +105,11 @@ class AuthService
         }
         $user = User::where('email', $otp->email)->first();
 
-        return DB::transaction(function () use ($otp, $user) {
-            $user->update([
-                'password' => bcrypt($otp->password),
-            ]);
+        return  $user;
 
 
 
 
-
-            return $user;
-        });
+ 
     }
 }

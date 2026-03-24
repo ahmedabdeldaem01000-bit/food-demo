@@ -125,34 +125,31 @@ class AuthController extends Controller
     public function updatePassword(VerifyOtpRequest $request)
     {
 
-         $this->authService->verifyOtpPassword($request->validated());
+   $user = $this->authService->verifyOtpPassword($request->validated());
 
-      
-
-       return view('web.auth.new-password');
+    
+    return view('web.auth.new-password', ['userId' => $user->id]);
     }
+
 
 
     public function updateNewPassword(Request $request)
     {
-        $request->validate([
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'password' => 'required|confirmed|min:6',
+    ]);
 
-            'password' => 'required|confirmed|min:6',
-        ]);
-
-        $data = auth()->user();
-
-        $user = User::where('email', $data->email)->first();
-
+    $user = User::findOrFail($request->user_id);
+    $user->update([
+        'password' => bcrypt($request->password),
+    ]);
         if (!$user) {
             return back()->withErrors([
                 'email' => 'User not found'
             ]);
         }
-
-        $user->update([
-            'password' => bcrypt($request->password),
-        ]);
+ 
 
         return redirect()->route('login.show')
             ->with('success', 'Password updated successfully.');

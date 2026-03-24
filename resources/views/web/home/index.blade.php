@@ -89,7 +89,7 @@
         <div class="swiper-wrapper">
             @foreach($data['sectionsWithProducts'] as $category)
                 <div class="swiper-slide flex flex-col items-center p-2    w-40 h-40 bg-white rounded-full">
-                    <a href="{{ route('category.index', $category->id) }}" class="flex flex-col items-center">
+                    <a href="{{ route('category.show', $category->id) }}" class="flex flex-col items-center">
                         <img src="{{ asset('storage/'.$category->image) }}" 
                              alt="{{ $category->name }}" 
                              class="w-24 h-24 object-cover rounded-full mb-2">
