@@ -14,12 +14,16 @@ class GlobalNotificationMail extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-   protected $notification;
+    protected string $title;
+    protected string $body;
+    protected ?string $image;
 
-public function __construct($notification)
-{
-    $this->notification = $notification;
-}
+    public function __construct(string $title, string $body, ?string $image = null)
+    {
+        $this->title = $title;
+        $this->body = $body;
+        $this->image = $image;
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -34,15 +38,22 @@ public function __construct($notification)
     /**
      * Get the mail representation of the notification.
      */
-   public function toMail($notifiable)
+
+    /** */
+    /**
+     * Summary of toMail
+     * @param mixed $notifiable
+     * @return MailMessage
+     */
+    public function toMail($notifiable): MailMessage
     {
         $mail = (new MailMessage)
-            ->subject($this->notification->title)
-            ->line($this->notification->body);
+            ->subject($this->title)
+                       ->line($this->body);
 
-        if ($this->notification->image) {
+        if ($this->image) {
             $mail->line('شوف الصورة:');
-            $mail->action('عرض المنتج', url($this->notification->image));
+            $mail->action('عرض المنتج', url($this->image));
         }
 
         return $mail;

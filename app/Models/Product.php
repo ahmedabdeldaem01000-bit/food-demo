@@ -1,14 +1,25 @@
 <?php
 
 namespace App\Models;
-
+ 
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property float $price
+ * 
+ 
+ */
 class Product extends Model
 {
-      use HasFactory;
+    /** @use HasFactory<ProductFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -24,22 +35,40 @@ class Product extends Model
     'ingredients' => 'array',
 ];
 
-       public function category()
+
+       /**
+        * Summary of category
+        * @return BelongsTo<Category, $this>
+        */
+       public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+       /**
+        * Summary of order
+        * @return HasMany<Order, $this>
+        */
        public function order()
     {
         return $this->hasMany(Order::class);
     }
+    
+/**
+ * @return BelongsToMany<User, $this, Favorite>
+ */
 public function favoritedBy()
 {
     return $this->belongsToMany(User::class, 'favorites')
                 ->using(Favorite::class)
                 ->withTimestamps();
 }
-public function carts()
+
+/**
+ * Summary of carts
+ * @return HasMany<Cart, $this>
+ */
+public function carts():HasMany
 {
     return $this->hasMany(Cart::class);
 }
@@ -59,7 +88,7 @@ protected static function boot()
             $number = $lastNumber + 1;
         }
 
-        $product->slug = 'PRODUCT-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+       $product->slug = 'PRODUCT-' . str_pad((string)$number, 4, '0', STR_PAD_LEFT);
     });
 }
 

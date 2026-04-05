@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::get('get-cart', [CartController::class, 'index'])->name('get-cart.index');
     Route::post('/paypal/create-payment', [PaypalController::class, 'createPayment'])->name('paypal.createPayment');
     Route::get('/paypal/success', [PaypalController::class, 'paymentSuccess'])->name('paypal.success');
+    Route::get('/payment/already_done', [PaypalController::class, 'alreadyDone'])->name('paypal.alreadyDone');
     Route::get('/paypal/cancel', [PaypalController::class, 'paymentCancel'])->name('paypal.cancel');
     Route::post('/paypal/webhook', [PaypalController::class, 'webhook']);
     Route::post('/user/fcm-token', [UserController::class, 'storeFcmToken']);

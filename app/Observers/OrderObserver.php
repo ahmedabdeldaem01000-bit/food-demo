@@ -16,14 +16,17 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
-            $this->sendFirebaseNotification($order->user->fcm_token ?? null, 'Order Created', 'Your order has been placed!');
-            $order->user->notify(new OrderCreated($order));
+        $user = $order->user;
+      
+            $this->sendFirebaseNotification($user->fcm_token ?? null, 'Order Created', 'Your order has been placed!');
+        /** @var \App\Models\User $user */
+    $user->notify(new OrderCreated($order));
     }
 
     /**
      * Handle the Order "updated" event.
      */
-     public function updated(Order $order)
+     public function updated(Order $order): void
     {
         if($order->isDirty('status') && $order->status === 'delivered') {
             $this->sendFirebaseNotification($order->user->fcm_token ?? null, 'Order Delivered', 'Your order has been delivered!');
@@ -54,7 +57,14 @@ class OrderObserver
     {
         //
     }
-      private function sendFirebaseNotification($token, $title, $body)
+      /**
+       * Summary of sendFirebaseNotification
+       * @param mixed $token
+       * @param mixed $title
+       * @param mixed $body
+       * @return void
+       */
+      private function sendFirebaseNotification($token, $title, $body):void
     {
         if(!$token) return;
 

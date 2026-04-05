@@ -13,7 +13,13 @@ class EnsureOtpVerified
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-       public function handle(Request $request, Closure $next)
+       /**
+        * Summary of handle
+        * @param Request $request
+        * @param Closure $next
+        * @return Response
+        */
+       public function handle(Request $request, Closure $next): Response
     {
        if (!$request->session()->get('otp_verified')) {
         abort(403);

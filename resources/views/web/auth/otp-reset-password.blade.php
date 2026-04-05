@@ -1,13 +1,13 @@
 @extends('web.app')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center w-full md:w-96 px-4">
+<div class="h-screen flex items-center justify-center w-full md:w-full px-4">
 
-    <div class="w-screen  bg-white rounded-2xl   ">
+    <div class="w-max p-8  bg-white rounded-2xl   ">
 
         <div class="text-start mb-8">
             <p class="text-xs font-semibold text-start text-gray-800">Please Enter the OTP to your <br> phone number :  +20 1xxxxxxxx</p>
-           
+         
         </div>
 
 <form method="POST" action="{{ route('update-password.submit') }}">

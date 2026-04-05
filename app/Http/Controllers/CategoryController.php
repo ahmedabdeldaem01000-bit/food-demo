@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $categories = Category::all();
+        $categories = Category::get();
         return response()->json(['success' => true, 'data' => $categories], 200);
     }
 
     // Create category
-    public function store(CategoryRequest $request)
+    public function store(CategoryRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -24,7 +24,7 @@ class CategoryController extends Controller
             $data['image'] = $request->file('image')->store('categories', 'public');
         }
 
-        $category = Category::create($data);
+        $category = Category::query()->create($data);
 
         return response()->json([
             'success' => true,
@@ -34,17 +34,17 @@ class CategoryController extends Controller
     }
 
     // Update category
-    public function update(CategoryRequest $request, Category $category)
+    public function update(CategoryRequest $request, Category $category): JsonResponse
     {
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            if ($category->image) {
-                Storage::disk('public')->delete($category->image);
+            if ($category['image']) {
+                Storage::disk('public')->delete($category['image']);
             }
             $data['image'] = $request->file('image')->store('categories', 'public');
         } else {
-            $data['image'] = $category->image;
+            $data['image'] = $category['image'];
         }
 
         $category->update($data);
@@ -58,13 +58,13 @@ class CategoryController extends Controller
 
 
     // Delete category
-    public function destroy($id)
+    public function destroy(string $id): JsonResponse
     {
-        $category = Category::findOrFail($id);
+        $category = Category::query()->findOrFail($id);
 
         // حذف الصورة لو موجودة
-        if ($category->image && \Storage::disk('public')->exists($category->image)) {
-            \Storage::disk('public')->delete($category->image);
+        if ($category['image'] && Storage::disk('public')->exists($category['image'])) {
+            Storage::disk('public')->delete($category['image']);
         }
 
         $category->delete();

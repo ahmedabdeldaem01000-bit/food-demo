@@ -12,6 +12,11 @@ use Carbon\Carbon;
 
 class AuthService
 {
+    /**
+     * Summary of sendOtp
+     * @param array<array,string> $data
+     * @return void
+     */
     public function sendOtp(array $data): void
     {
         $code = random_int(1000, 9999);
@@ -27,12 +32,20 @@ class AuthService
                 'expires_at' => Carbon::now()->addMinutes(10),
             ]
         );
-        Mail::to($data['email'])->queue(new OtpMail($code));
+        Mail::to($data['email'])->queue(new OtpMail((string)$code));
 
     }
 
+    /**
+     * Summary of verifyOtp
+     * @param array<array,mixed> $data
+     * @throws \Exception
+     * @return User
+     */
     public function verifyOtp(array $data): User
     {
+        
+     
         $data['code'] = implode('', $data['code']);
 
         $otp = Otp::where('code', $data['code'])
@@ -65,7 +78,12 @@ class AuthService
 
 
 
-
+    /**
+     * Summary of sendOtpPassword
+     * @param array<array,float> $data
+     * @throws \Exception
+     * @return void
+     */
     public function sendOtpPassword(array $data): void
     {
       
@@ -87,29 +105,34 @@ class AuthService
                 'expires_at' => Carbon::now()->addMinutes(10),
             ]
         );
-        Mail::to($data['email'])->queue(new OtpMail($code));
+        Mail::to($data['email'])->queue(new OtpMail((string)$code));
 
     }
-
-
-    public function verifyOtpPassword(array $data): User
-    {
-        $data['code'] = implode('', $data['code']);
-
-        $otp = Otp::where('code', $data['code'])
-            ->where('expires_at', '>', now())
-            ->first();
-
-        if (!$otp) {
-            throw new \Exception('Invalid or expired OTP');
-        }
-        $user = User::where('email', $otp->email)->first();
-
-        return  $user;
-
-
-
 
  
+
+/**
+ * @param array<string, mixed> $data
+ * @return User|null
+ */
+public function verifyOtpPassword(array $data): ?User
+{
+    // PHPStan ممكن يعترض لو عملنا implode على حاجة مش مأكدين إنها array
+    /** @var array<int, string|int> $codeArray */
+    $codeArray = $data['code'] ?? [];
+    $data['code'] = implode('', $codeArray);
+
+    $otp = Otp::where('code', $data['code'])
+        ->where('expires_at', '>', now())
+        ->first();
+
+    if (!$otp) {
+        throw new \Exception('Invalid or expired OTP');
     }
+
+    /** @var User|null $user */
+    $user = User::where('email', $otp->email)->first();
+
+    return $user;
+}
 }

@@ -4,54 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Category;
 use App\Models\Product;
 use App\Services\ProductService;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
+
 class ProductController extends Controller
 {
-    protected $productService;
+    protected ProductService $productService;
 
     public function __construct(ProductService $productService)
     {
         $this->productService = $productService;
     }
-    public function index()
+    public function index():JsonResponse
     {
-        $product = Product::latest()->paginate(10);
+        $product = Product::query()->latest()->paginate(10);
         return response()->json([
             'data' => $product
         ]);
 
     }
 
-public function store(ProductRequest $request)
-{
-    try {
+    public function store(ProductRequest $request):JsonResponse
+    {
+        try {
 
-        $product = $this->productService->createProduct($request);
+            $product = $this->productService->createProduct($request);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'تم إضافة المنتج بنجاح ✅',
-            'data' => $product,
-        ], 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'تم إضافة المنتج بنجاح ✅',
+                'data' => $product,
+            ], 201);
 
-    } catch (\Throwable $e) {
+        } catch (\Throwable $e) {
 
-        return response()->json([
-            'success' => false,
-            'message' => 'حدث خطأ أثناء إضافة المنتج',
-            'error' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء إضافة المنتج',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product):JsonResponse
     {
         try {
 
@@ -72,27 +68,17 @@ public function store(ProductRequest $request)
         }
     }
 
-public function destroy(Product $product)
+  public function destroy(Product $product): JsonResponse
 {
-    try {
+    $this->productService->destroy($product);
 
-        $this->productService->destroy($product);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'تم حذف المنتج'
-        ]);
-
-    } catch (\Throwable $e) {
-
-        return response()->json([
-            'success' => false,
-            'message' => 'فشل الحذف'
-        ], 500);
-    }
+    return response()->json([
+        'success' => true,
+        'message' => 'تم حذف المنتج'
+    ]);
 }
 
-    public function topRated()
+    public function topRated():JsonResponse
     {
 
 
@@ -102,14 +88,14 @@ public function destroy(Product $product)
             'data' => $topProducts,
         ]);
     }
-    public function CategoryPage()
+    public function CategoryPage():JsonResponse
     {
         $category = $this->productService->AllCategories();
         return response()->json($category);
     }
 
     // 🟢 Get products by category
-    public function productsByCategory($id)
+    public function productsByCategory(string $id):JsonResponse
     {
 
         $category = $this->productService->CategoryById($id);

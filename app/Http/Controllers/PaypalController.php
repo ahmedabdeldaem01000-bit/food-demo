@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Services\Payment\PaypalService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Js;
 
 class PaypalController extends Controller
 {
-    protected $paypalService;
+    protected PaypalService $paypalService;
 
     public function __construct(PaypalService $paypalService)
     {
@@ -16,7 +19,7 @@ class PaypalController extends Controller
     }
 
 
-    public function createPayment(Request $request)
+    public function createPayment(Request $request): JsonResponse
     {
 
         $data = $request->validate([
@@ -24,8 +27,12 @@ class PaypalController extends Controller
             'product_id' => 'required|exists:products,id',
         ]);
 
+
+        $user = Auth::user();
+if($user){
+    
         $result = $this->paypalService->createPayment(
-            auth()->id(),
+            $user['id'],
             $data['amount'],
             $data['product_id']
         );
@@ -35,16 +42,22 @@ class PaypalController extends Controller
             'approval_url' => $result['approval_url'],
             'order_id' => $result['order_id']
         ]);
+}else{
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Unauthenticated.'
+    ], 401);
+}
     }
 
-    public function paymentSuccess(Request $request)
+    public function paymentSuccess(Request $request):JsonResponse
     {
         try {
 
             $capture = $this->paypalService->capturePayment(
                 $request->query('token')
             );
-            
+
 
             return response()->json([
                 'status' => 'success',
@@ -63,14 +76,14 @@ class PaypalController extends Controller
         }
     }
 
-    public function paymentCancel()
+    public function paymentCancel():JsonResponse
     {
         return response()->json([
             'status' => 'cancelled'
         ]);
     }
 
-    public function webhook(Request $request)
+    public function webhook(Request $request):JsonResponse
     {
         $this->paypalService->handleWebhook($request->all());
 

@@ -8,8 +8,16 @@ use Illuminate\View\Component;
 
 class ProductCard extends Component
 {
+    /**
+     * 
+     * @var array<string, mixed>
+     */
     public $product;
 
+    /**
+     * Summary of __construct
+     * @param array<string,mixed> $product
+     */
     public function __construct($product)
     {
         $this->product = $product;

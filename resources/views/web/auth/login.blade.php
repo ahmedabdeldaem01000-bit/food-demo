@@ -1,7 +1,7 @@
 @extends('web.app')
 @section('content')
 
-<div class="w-full flex flex-wrap flex-row justify-center items-center content-center ">
+<div class="w-full flex flex-wrap flex-row justify-center items-center content-center mt-32  ">
     <form action="{{ route('login.submit') }}" method="POST" class="p-4 flex flex-col flex-wrap content-center justify-center w-full items-start md:w-100 md:border md:border-green-800 md:rounded-[15px] md:justify-between  md:h-100 md:p-8">
   @csrf
    @if ($errors->any())

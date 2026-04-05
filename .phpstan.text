@@ -1,0 +1,22 @@
+% Error 
+has no return type specified. 
+% solving the error
+public function logout(Request $request): mixed | JsonResponse | sting | array | bool | int | float | object | iterable | void  علي حسب الي بيرجع
+
+% Error number Tow
+ Cannot call method tokens()
+  if() موجود اصلا من خلال  user اتاكد ان ال
+%   مثال
+    %    $user=Auth::user();
+        % if($user){
+        %     $user->currentAccessToken()->delete();
+
+        % }else{
+        %     return response()->json([
+        %         'message' => 'User not authenticated'
+        %     ], 401);
+        % }
+
+
+      Error:   Call to an undefined method 
+        

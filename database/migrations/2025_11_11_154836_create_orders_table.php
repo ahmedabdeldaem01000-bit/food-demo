@@ -16,6 +16,8 @@ return new class extends Migration {
     $table->decimal('amount', 10, 2);
     $table->string('currency')->default('usd');
     $table->string('status')->default('pending');
+    
+    $table->string('paypal_order_id')->nullable()->index();
     $table->string('stripe_session_id')->nullable();
     $table->timestamps();
 

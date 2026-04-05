@@ -5,7 +5,7 @@ Categories
 @section('content')
 <div class="w-full flex flex-wrap flex-row items-center justify-center content-center">
 
-<div class="w-full md:w-[65%] mt-32 px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 px-[9%] gap-4">
+<div class="w-full md:w-[65%] mt-32 px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3   gap-4">
  
 @foreach ($categories as $category)
 

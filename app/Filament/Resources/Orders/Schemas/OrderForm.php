@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -11,8 +12,8 @@ class OrderForm
     {
         return $schema
             ->components([
-                TextInput::make('user_id')
-                    ->numeric()
+                Select::make('user_id')
+                    ->relationship('user', 'name')
                     ->default(null),
                 TextInput::make('amount')
                     ->required()
@@ -23,6 +24,8 @@ class OrderForm
                 TextInput::make('status')
                     ->required()
                     ->default('pending'),
+                TextInput::make('paypal_order_id')
+                    ->default(null),
                 TextInput::make('stripe_session_id')
                     ->default(null),
             ]);

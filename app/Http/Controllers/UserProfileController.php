@@ -3,26 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserProfileController extends Controller
 {
 
-    protected $userService;
+    protected UserService $userService;
 
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
     }
 
-    public function profilePage()
+    public function profilePage():JsonResponse
     {
+        $data=$this->userService->getProfile();
+      
         return response()->json([
-            'data' => $this->userService->getProfile()
+            'data' => $data
         ]);
     }
 
-    public function personalEdit(Request $request)
+    public function personalEdit(Request $request):JsonResponse
     {
         $data = $request->validate([
             'name'       => 'required|string',
@@ -41,7 +44,7 @@ class UserProfileController extends Controller
         ]);
     }
 
-    public function userOrder()
+    public function userOrder():JsonResponse
     {
         return response()->json([
             'status' => 'success',

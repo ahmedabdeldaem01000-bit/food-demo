@@ -1,9 +1,9 @@
 @extends('web.app')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center w-screen px-4">
+<div class="h-full flex items-center justify-center w-full px-4">
 
-    <div class="w-screen md:w-96    bg-white rounded-2xl   ">
+    <div class=" md:w-96  w-max   bg-white rounded-2xl   ">
 
         <div class="text-center mb-6">
             <p class="text-xs font-semibold  text-gray-800">Please Enter the OTP to your phone number :</p>

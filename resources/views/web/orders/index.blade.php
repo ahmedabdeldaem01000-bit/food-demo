@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <div class="mt-32 flex flex-wrap flex-row items-center justify-center content-center ">
- <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 items-center mt-4 sm:grid-cols-1 gap-12 h-screen px-[9%]">
+ <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 items-center mt-4 sm:grid-cols-1 gap-12 h-[100%] px-[9%]">
             @foreach($orders as $order)
         
             @foreach ($order->items as $item)

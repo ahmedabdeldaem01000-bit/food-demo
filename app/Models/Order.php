@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Order extends Model
 {
+    /** @use HasFactory<OrderFactory>*/
     use HasFactory;
  
     protected $fillable = [
@@ -14,30 +19,49 @@ class Order extends Model
         'currency',
         'status',
         'stripe_session_id',
+        'paypal_order_id',
         'product_id'
     ];
-    public function user()
+    /**
+     * Summary of user
+     * @return BelongsTo<User, $this>
+     */
+    public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
     }
     
-    public function product()
+    /**
+     * Summary of product
+     * @return BelongsTo<Product, $this>
+     */
+    public function product():BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    
-    public function payment()
+    /**
+     * Summary of payment
+     * @return HasMany<Payment, $this>
+     */
+    public function payment():HasMany
     {
         return $this->hasMany(Payment::class);
     }
-    
-        public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
+  /**
+ * @return HasMany<OrderItem, $this>
+ */
+public function items(): HasMany
+{
+    /** @var HasMany<OrderItem, $this> */
+    return $this->hasMany(OrderItem::class);
+}
 
     // لو عايز تجيب المنتجات مباشرة من OrderItems
+    /**
+     * Summary of products
+     * @return HasManyThrough<Product, OrderItem, $this>
+     */
     public function products()
     {
         return $this->hasManyThrough(

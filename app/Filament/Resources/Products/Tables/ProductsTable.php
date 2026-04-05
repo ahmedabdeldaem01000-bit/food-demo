@@ -38,7 +38,7 @@ TextColumn::make('review')
     ->formatStateUsing(fn ($state) => $state . ' ⭐')
     ->sortable(),
 
-TextColumn::make('category.name') // 👈 بدل category_id
+TextColumn::make('category.name') 
     ->label('Category')
     ->sortable()
     ->searchable(),

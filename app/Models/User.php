@@ -3,7 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -49,39 +53,44 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-             'notifications' => 'collection',
+            'notifications' => 'collection',
         ];
     }
- 
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
-    public function order()
-    {
-        return $this->hasMany(Order::class);
-    }
 
-    public function favorites()
-    {
-        return $this->belongsToMany(Product::class, 'favorites')
-            ->using(Favorite::class) // إخبار لارافل باستخدام الموديل الوسيط
-            ->withTimestamps();
-    }
-
-    public function cart()
-    {
-        return $this->hasMany(Cart::class);
-    }
-    public function routeNotificationForVonage()
-    {
-
-        return $this->phone;
-    }
-
-
-    public function notificationReads()
+   /**
+ * @return BelongsTo<Role, $this>
+ */
+public function role(): BelongsTo
 {
-    return $this->hasMany(NotificationRead::class);
+    return $this->belongsTo(Role::class);
 }
+
+/**
+ * @return HasMany<Order, $this>
+ */
+public function order(): HasMany
+{
+    return $this->hasMany(Order::class);
+}
+
+/**
+ * @return BelongsToMany<Product, $this, Favorite>
+ */
+public function favorites(): BelongsToMany
+{
+    return $this->belongsToMany(Product::class, 'favorites')
+        ->using(Favorite::class)
+        ->withTimestamps();
+}
+
+/**
+ * @return HasMany<Cart, $this>
+ */
+public function cart(): HasMany 
+{
+    return $this->hasMany(Cart::class);
+}
+ 
+
+ 
 }

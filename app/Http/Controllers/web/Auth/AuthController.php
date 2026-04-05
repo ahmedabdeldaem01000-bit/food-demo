@@ -9,9 +9,11 @@ use App\Models\User;
 use App\Notifications\SendSmsNotification;
 
 use App\Services\AuthService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 
 class AuthController extends Controller
@@ -21,15 +23,15 @@ class AuthController extends Controller
     }
 
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): RedirectResponse
     {
-       
+
         $this->authService->sendOtp($request->validated());
 
         return redirect()->route('otp.showOtp')
-            ->with('email', $request->email);
+            ->with('email', $request['email']);
     }
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -39,8 +41,10 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // حماية من session fixation
 
-            // مثال على استخدام Spatie Permission للتوجيه
-            if (Auth::user()->hasRole('admin')) {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            if ($user->hasRole('admin')) {
                 return redirect()->route('admin.dashboard');
             }
 
@@ -51,58 +55,59 @@ class AuthController extends Controller
             'email' => 'بيانات الدخول غير صحيحة، يرجى التأكد من الإيميل وكلمة المرور.',
         ])->withInput($request->only('email')); // للحفاظ على الإيميل المكتوب
     }
-    public function logout(Request $request)
+    public function logout(Request $request):RedirectResponse
     {
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
- return redirect()->route('login.show')
-    ->with('success', 'Logged out successfully');
+        return redirect()->route('login.show')
+            ->with('success', 'Logged out successfully');
     }
 
-    public function showLogin()
+    public function showLogin():View
     {
         return view('web.auth.login');
     }
 
 
-    public function showRegister(Request $request)
+    public function showRegister(Request $request):View
     {
         return view('web.auth.register');
     }
-    public function showOtp(Request $request)
+    public function showOtp(Request $request):View
     {
         return view('web.auth.otp');
     }
-    public function showHome()
+    public function showHome():View
     {
-        return view('web.home.index.index');
+        return view('web.home.index');
     }
 
 
 
 
-    public function verify(VerifyOtpRequest $request)
+    public function verify(VerifyOtpRequest $request):RedirectResponse
     {
 
         $user = $this->authService->verifyOtp($request->validated());
 
-        auth()->login($user);
+        Auth::login($user);
+
 
         return redirect()->route('home.index');
     }
     // -----------------------------------------------------------
 // -----------------------------------------------------------
 
-    public function showForgetPassword()
+    public function showForgetPassword():View
     {
         return view('web.auth.forget-password');
     }
 
 
-    public function otpForgetPassword()
+    public function otpForgetPassword():View
     {
         $this->authService->sendOtpPassword(request()->validate([
             'email' => 'required|email',
@@ -111,45 +116,53 @@ class AuthController extends Controller
 
     }
 
-    public function otpResetPassword()
+
+    public function otpResetPassword():View
     {
- 
+
         return view('web.auth.otp-reset-password');
     }
 
-    public function newPassword()
+    public function newPassword():View
     {
-    
+
         return view('web.auth.new-password');
     }
-    public function updatePassword(VerifyOtpRequest $request)
+
+/**
+ * Summary of updatePassword
+ * @param VerifyOtpRequest $request
+ * @return View
+ */
+    public function updatePassword(VerifyOtpRequest $request):View
     {
 
-   $user = $this->authService->verifyOtpPassword($request->validated());
+        $user = $this->authService->verifyOtpPassword($request->validated());
+        /** @var \App\Models\User|null $user */
+if (!$user) {
+    abort(404); // أو redirect
+}
 
-    
-    return view('web.auth.new-password', ['userId' => $user->id]);
+return view('web.auth.new-password', [
+    'userId' => $user->id
+]);
     }
 
 
 
-    public function updateNewPassword(Request $request)
+    public function updateNewPassword(Request $request):RedirectResponse
     {
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'password' => 'required|confirmed|min:6',
-    ]);
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|confirmed|min:6',
+        ]);
 
-    $user = User::findOrFail($request->user_id);
-    $user->update([
-        'password' => bcrypt($request->password),
-    ]);
-        if (!$user) {
-            return back()->withErrors([
-                'email' => 'User not found'
-            ]);
-        }
- 
+        // $user = User::query()->findOrFail($request->input('user_id'));
+   /** @var User $user */
+    $user = User::findOrFail((int) $request->input('user_id'));
+        $user->update([
+            'password' => bcrypt($request->input('password')),
+        ]);
 
         return redirect()->route('login.show')
             ->with('success', 'Password updated successfully.');

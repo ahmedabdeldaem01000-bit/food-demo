@@ -2,60 +2,93 @@
 
 namespace App\Services;
 
+
 use App\Models\Product;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
-
+    /**
+     * Summary of getProfile
+     * @return \App\Models\User 
+     */
     public function getProfile()
     {
-        return Auth::user();
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = Auth::user();
+        return $user;
     }
 
+    /**
+     * Summary of updateProfile
+     * @param array<string, mixed> $data
+     * @return \App\Models\User|null
+     */
     public function updateProfile(array $data)
     {
+        /**
+         * @var \App\Models\User|null  $user
+         */
         $user = Auth::user();
-        
-        $user->update($data);
-        
 
-        return $user->fresh();
+        if ($user) {
+            $user->update($data);
+            return $user->fresh();
+        }
+        return null;
     }
 
+    /**
+     * Summary of getUserOrders
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order>
+     */
     public function getUserOrders()
     {
+        /**
+         * @var \App\Models\User $user
+         */
         $user = Auth::user();
 
         return $user->order()
-                ->with(['items.product'])
+            ->with(['items'])
             ->latest()
             ->get();
     }
 
-    public function getFavorites()
-    {
-        return Auth::user()->favorites()->get();
-    }
-
-public function toggleFavorite($productId)
+/**
+ * Summary of getFavorites
+ * @return Collection<int, \App\Models\Product>
+ */
+public function getFavorites(): Collection // إضافة الـ Return Type هنا
 {
-    $user = auth()->user();
-    
-    // التبديل التلقائي: لو موجود يحذفه، لو مش موجود يضيفه
-    $result = $user->favorites()->toggle($productId);
+    /** @var \App\Models\User|null $user */
+    $user = Auth::user();
 
-    //attached تعني أنه تم إضافة المنتج
-    if (count($result['attached']) > 0) {
-        return 'added';
+    if (!$user) {
+        return new Collection(); // أو collect() لإنشاء مجموعة فارغة
     }
-    
-    // detached تعني أنه تم حذف المنتج
-    return 'removed';
+
+    // هنا بنرجع الـ Collection اللي فيها المنتجات المفضلة
+    return $user->favorites()->get();
 }
 
-    public function removeFavorite($productId)
-    {
-        Auth::user()->favorites()->detach($productId);
+/**
+     * Toggle a product in user favorites.
+     * * @param mixed $productId
+     * @return string
+     */
+public function toggleFavorite(User $user, int $productId): string
+{
+    $result = $user->favorites()->toggle($productId);
+
+    if (!empty($result['attached'])) {
+        return 'added';
     }
+
+    return 'removed';
+}
 }

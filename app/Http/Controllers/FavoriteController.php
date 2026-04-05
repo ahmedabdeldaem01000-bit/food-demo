@@ -3,42 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class FavoriteController extends Controller
 {
 
-    protected $userService;
+ 
+    protected UserService $userService;
 
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
     }
 
-    public function index()
+ 
+    public function index():JsonResponse
     {
         return response()->json([
             'status' => 'success',
             'data' => $this->userService->getFavorites()
-        ]);
+        ], 200);
     }
 
-    public function store($productId)
-    {
-        $this->userService->addFavorite($productId);
+   public function toggle(int $productId): JsonResponse
+{
+    $user = auth()->user();
 
+    if (!$user) {
         return response()->json([
-            'status' => 'success',
-            'message' => 'Product added to favorites.'
-        ]);
+            'message' => 'Unauthorized'
+        ], 401);
     }
 
-    public function destroy($productId)
-    {
-        $this->userService->removeFavorite($productId);
+    $status = $this->userService->toggleFavorite($user, $productId);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Product removed from favorites.'
-        ]);
-    }
+    return response()->json([
+        'status' => $status,
+        'is_favorite' => $status === 'added'
+    ]);
+}
+ 
 }

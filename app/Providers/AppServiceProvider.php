@@ -1,14 +1,9 @@
 <?php
 
 namespace App\Providers;
-
-use App\Models\Cart;
-use App\Models\Order;
 use App\Models\Product;
-use App\Observers\OrderObserver;
 use App\Observers\ProductObserver;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -53,5 +48,7 @@ class AppServiceProvider extends ServiceProvider
             'unreadCount' => $unreadCount,
         ]);
     });
+
+
 }
 }

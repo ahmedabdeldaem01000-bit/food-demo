@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Notifications\GlobalNotificationMail;
 use Illuminate\Support\Facades\Notification;
 class ProductObserver {
-   public function created(Product $product)
+   public function created(Product $product):void
     {
         $notification = \App\Models\Notification::create([
             'title' => 'منتج جديد',
@@ -18,7 +18,7 @@ class ProductObserver {
         ]);
 
         User::chunk(1000, function ($users) use ($notification) {
-            Notification::send($users, new GlobalNotificationMail($notification));
+            Notification::send($users, new GlobalNotificationMail($notification->title, $notification->body, $notification->image   ));
         });
     }
 }

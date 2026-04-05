@@ -5,7 +5,8 @@ use App\Models\Category;
 use App\Models\Product;
 
 
-
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
  
@@ -13,7 +14,7 @@ use Exception;
 class ProductService
 {
    
-    public function CategoryPage($data)
+    public function CategoryPage(mixed $data):mixed
     {
    
                 return [
@@ -22,7 +23,7 @@ class ProductService
            
 
     }
-    public function CategoryById($data)
+    public function CategoryById(mixed $data):mixed
     {
         if (!$data) {
             return response()->json(['message' => 'Category not found'], 404);
@@ -30,52 +31,38 @@ class ProductService
         return Category::with(['products'])->findOrFail($data);
 
     }
+ 
+ 
 
-    public function AllCategories(){
-        return Category::get();
-
-    }
-
-    public function Rating(){
+    /** @return \Illuminate\Database\Eloquent\Collection<int, Category> */
+public function AllCategories(): Collection
+{
+    return Category::get();
+}
+    /**
+     * Summary of Rating
+     * @return \Illuminate\Database\Eloquent\Collection<int, Product>
+     */
+    public function Rating():Collection
+    {
          return Product::orderByDesc('review')
             ->with(['category']) 
             ->take(10) 
             ->get();
     }
 
-    public function destroy($data){
-       try {
-        $product = Product::findOrFail($data);
-
-        // حذف الصورة من التخزين لو موجودة  ProductService
-        if ($product->image && \Storage::disk('public')->exists($product->image)) {
-            \Storage::disk('public')->delete($product->image);
-        }
-
-        // حذف المنتج نهائياً
-        $product->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'تم حذف المنتج بنجاح ✅',
-        ], 200);
-
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'المنتج غير موجود.',
-        ], 404);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'حدث خطأ أثناء حذف المنتج.',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
+  
+public function destroy(Product $product): void
+{
+    if ($product['image'] && Storage::disk('public')->exists($product['image'])) {
+        Storage::disk('public')->delete($product['image']);
     }
 
+    $product->delete();
+}
 
-public function updateProduct($request, Product $product)
+
+public function updateProduct(mixed $request , Product $product):mixed
 {
     DB::beginTransaction();
 
@@ -121,7 +108,7 @@ public function updateProduct($request, Product $product)
     }
 }
 
-public function createProduct($request)
+public function createProduct(mixed $request):mixed
 {
     DB::beginTransaction();
 

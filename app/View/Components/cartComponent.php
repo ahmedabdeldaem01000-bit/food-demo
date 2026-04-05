@@ -7,9 +7,13 @@ use Illuminate\View\Component;
 
 class CartComponent extends Component
 {
-    public $item;
+ /** @var array<string, mixed> */
+    public array $item ;
 
-    public function __construct($item)
+    /**
+     *@param array<string, mixed> $item
+     */
+    public function __construct(array $item)
     {
         $this->item = $item;
     }
