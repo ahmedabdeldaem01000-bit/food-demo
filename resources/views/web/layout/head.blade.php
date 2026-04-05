@@ -4,14 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf_token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
  @livewireStyles
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
     <title>Foodify</title>
 </head>
 <style>
-
+#map{
+    height: calc(100% - 60px);
+}
+header{
+    padding: 15px;
+    background: #f0f0f0;
+    font-size: 1.2rem;
+}
+.info{
+    position: absolute;
+    top:70px;
+    right: 10px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px
+}
 </style>
 
 <body

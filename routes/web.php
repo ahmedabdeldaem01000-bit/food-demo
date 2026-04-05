@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\web\NotificationController;
 use App\Http\Controllers\web\payment\PaypalController;
@@ -82,6 +83,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/paypal/webhook', [PaypalController::class, 'webhook']);
     Route::post('/user/fcm-token', [UserController::class, 'storeFcmToken']);
     Route::get('/notification', [NotificationController::class, 'index'])->name('notification.index');
+    Route::get('/tracking', [LocationController::class, 'index'])->name('location.index');
+    Route::post('/tracking/update', [LocationController::class, 'update'])->name('location.update');
+
+
 
 });
 

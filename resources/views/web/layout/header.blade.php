@@ -41,44 +41,45 @@
 
 
         @auth
-            <li>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit">
-                        Logout
-                    </button>
-                </form>
-            </li>
+                <li>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            Logout
+                        </button>
+                    </form>
+                </li>
 
-            <li>
-                <a href="{{ route('home.index') }}">Home</a>
-            </li>
+                <li>
+                    <a href="{{ route('home.index') }}">Home</a>
+                </li>
 
-            <li>
+                <li>
 
-                <a href="{{ route('profile.profilePage') }}">Profile</a>
-            </li>
-            <li class="justify-center flex flex-col items-center">
-                <p class="md:hidden flex"> <i class="fa-solid fa-layer-group"></i></p>
-                <a href="{{ route('category.index') }}">Category</a>
-            </li>
-            <li class="justify-center flex flex-col items-center">
-                <p class="md:hidden flex"> <i class="fa-regular fa-heart"></i></p>
-                <a href="{{ route('favorite.showFavorite') }}">Favorite</a>
-            </li>
-   
+                    <a href="{{ route('profile.profilePage') }}">Profile</a>
+                </li>
+                <li class="justify-center flex flex-col items-center">
+                    <p class="md:hidden flex"> <i class="fa-solid fa-layer-group"></i></p>
+                    <a href="{{ route('category.index') }}">Category</a>
+                </li>
+                <li class="justify-center flex flex-col items-center">
+                    <p class="md:hidden flex"> <i class="fa-regular fa-heart"></i></p>
+                    <a href="{{ route('favorite.showFavorite') }}">Favorite</a>
+                </li>
 
 
-    </ul>
- 
-    <div class="  w-fit flex-row flex-wrap gap-4 justify-end  md:flex hidden  items-end">
-        <a href="{{ route('get-cart.index') }}"><i class="fa-solid fa-cart-shopping"></i> <span class="cart-count">
-{{ $cartCount }}
-</span></a>
-        <a href="{{ route('notification.index') }}"><i class="fa-regular fa-bell"></i><span class="cart-count">
-{{ $unreadCount }}
-</span></a>
-   
-    </div>
-         @endauth
+
+            </ul>
+
+            <div class="  w-fit flex-row flex-wrap gap-4 justify-end  md:flex hidden  items-end">
+                <a href="{{ route('get-cart.index') }}"><i class="fa-solid fa-cart-shopping"></i> <span class="cart-count">
+                        {{ $cartCount }}
+                    </span></a>
+                <a href="{{ route('notification.index') }}"><i class="fa-regular fa-bell"></i><span class="cart-count">
+                        {{ $unreadCount }}
+                    </span></a>
+
+            </div>
+
+        @endauth
 </div>

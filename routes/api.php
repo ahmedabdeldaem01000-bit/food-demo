@@ -40,8 +40,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     Route::post('/paypal/create-payment', [PaypalController::class, 'createPayment']);
-    Route::get('/paypal/success', [PaypalController::class, 'paymentSuccess'])->name('paypal.success');
-    Route::get('/paypal/cancel', [PaypalController::class, 'paymentCancel'])->name('paypal.cancel');
+    Route::get('/paypal/succes', [PaypalController::class, 'paymentSuccess'])->name('paypal.succes');
+    Route::get('/paypal/cance', [PaypalController::class, 'paymentCancel'])->name('paypal.cance');
     Route::post('/paypal/webhook', [PaypalController::class, 'webhook']);
     Route::post('/user/fcm-token', [UserController::class, 'storeFcmToken']);
 
