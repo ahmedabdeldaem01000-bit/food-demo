@@ -1,14 +1,30 @@
 @extends('web.app')
-@section('page-title')
-{{ $category->name }}
-@endsection
+
+@section('title', $category->name . ' | Foodify')
+
 @section('content')
-  <div class="mt-32 ">
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 mt-4 sm:grid-cols-1 gap-12  px-[9%]">
-        @foreach($products as $product)
-            <x-product-card :product="$product" />
-        @endforeach
+    <div class="page-container">
+        <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <a href="{{ route('category.index') }}" class="text-sm font-semibold text-[#245a38] hover:underline">← All categories</a>
+                <p class="eyebrow mt-5">Browse category</p>
+                <h1 class="section-heading mt-2">{{ $category->name }}</h1>
+                <p class="section-copy">Dishes available in this category.</p>
+            </div>
+        </div>
+
+        @if($products->isNotEmpty())
+            <div class="product-grid">
+                @foreach($products as $product)
+                    <x-product-card :product="$product" />
+                @endforeach
+            </div>
+        @else
+            <div class="surface px-6 py-12 text-center">
+                <h2 class="font-semibold text-slate-800">No dishes in this category yet.</h2>
+                <p class="mt-2 text-sm text-slate-500">Try another category from the menu.</p>
+                <a href="{{ route('category.index') }}" class="btn-primary mt-5">Browse categories</a>
+            </div>
+        @endif
     </div>
-  </div>
-  
 @endsection

@@ -28,7 +28,7 @@ class OrderInfolist
 
                             TextEntry::make('status')
                                 ->badge()
-                                ->color(fn($state) => match ($state) {
+                                ->color(fn ($state) => match ($state) {
                                     'completed' => 'success',
                                     'pending' => 'warning',
                                     'failed' => 'danger',
@@ -38,9 +38,9 @@ class OrderInfolist
                             TextEntry::make('amount')
                                 ->label('Total')
                                 ->formatStateUsing(
-                                    fn($state, $record) =>
-                                    number_format($state, 2) . ' ' . $record->currency
-                                ),
+                                    fn ($state, $record) => number_format($state, 2).' '.$record->currency
+                                )
+                                ->visible(fn (): bool => auth()->user()?->hasRole('admin') ?? false),
                         ]),
                     ])
                     ->columns(1),
@@ -55,7 +55,8 @@ class OrderInfolist
 
                             TextEntry::make('user.email')
                                 ->label('Email')
-                                ->placeholder('-'),
+                                ->placeholder('-')
+                                ->visible(fn (): bool => auth()->user()?->hasRole('admin') ?? false),
                         ]),
                     ]),
 
@@ -66,8 +67,8 @@ class OrderInfolist
                             TextEntry::make('paypal_order_id')
                                 ->label('PayPal ID')
                                 ->copyable()
-                                ->placeholder('-'),
-
+                                ->placeholder('-')
+                                ->visible(fn (): bool => auth()->user()?->hasRole('admin') ?? false),
 
                         ]),
                     ]),
@@ -85,17 +86,18 @@ class OrderInfolist
                                 ->dateTime(),
                         ]),
                     ]),
-           
-     Section::make('Items')
-                    ->schema([ Grid::make(3)->schema([
+
+                Section::make('Items')
+                    ->schema([Grid::make(3)->schema([
                         RepeatableEntry::make('items')
                             ->schema([
                                 TextEntry::make('product.name')->label('Product Name'),
                                 TextEntry::make('quantity')->label('Product Quantity'),
                                 TextEntry::make('price')->label('Product Price')
-                                    ->formatStateUsing(fn($state) => number_format($state, 2)),
-                              ]), ])
-                    ])
+                                    ->formatStateUsing(fn ($state) => number_format($state, 2))
+                                    ->visible(fn (): bool => auth()->user()?->hasRole('admin') ?? false),
+                            ]), ]),
+                    ]),
 
             ]);
     }

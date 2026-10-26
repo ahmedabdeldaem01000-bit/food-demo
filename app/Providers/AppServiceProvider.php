@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Providers;
+use App\Models\Discount;
 use App\Models\Product;
+use App\Observers\DiscountObserver;
 use App\Observers\ProductObserver;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
 {
     // Order::observe(OrderObserver::class);
  Product::observe(ProductObserver::class);
+ Discount::observe(DiscountObserver::class);
     View::composer('*', function ($view) {
 
         $cartCount = 0;
@@ -35,7 +38,8 @@ class AppServiceProvider extends ServiceProvider
             $cartCount = \App\Models\Cart::where('user_id', $userId)->count();
 
             // unread notifications count
-       $unreadCount = \App\Models\Notification::leftJoin('notification_reads', function ($join) use ($userId) {
+       $unreadCount = \App\Models\Notification::where('notifications.notifiable_id', (string) $userId)
+           ->leftJoin('notification_reads', function ($join) use ($userId) {
     $join->on('notifications.id', '=', 'notification_reads.notification_id')
          ->where('notification_reads.user_id', '=', $userId);
 })

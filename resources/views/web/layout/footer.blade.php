@@ -1,52 +1,26 @@
-<footer class="bg-gray-900 text-white mt-10 w-full">
-    <div class="container mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-
-        <!-- Restaurant Info -->
+<footer class="border-t border-[#e7ebe5] bg-white">
+    <div class="page-container grid gap-8 py-8 sm:grid-cols-2 sm:items-center">
         <div>
-            <h2 class="text-xl font-bold mb-4">Phon Restaurant</h2>
-            <p class="text-gray-300 mb-2">
-                The best Eastern and Western dishes with a modern twist.
-            </p>
-            <p class="text-gray-400">
-                📍 Address: 123 Restaurant Street, City
-            </p>
-            <p class="text-gray-400">
-                📞 Phone: <a href="tel:+201234567890" class="hover:text-yellow-500">+20 123 456 7890</a>
-            </p>
+            <a href="{{ route('home.index') }}" class="text-lg font-extrabold tracking-tight text-[#245a38]">Foodify</a>
+            <p class="mt-2 max-w-md text-sm leading-6 text-slate-500">Browse the menu, save your favorites, and keep track of your orders.</p>
         </div>
-
-        <!-- Quick Links -->
-        <div>
-            <h2 class="text-xl font-bold mb-4">Quick Links</h2>
-            <ul class="space-y-2">
-                <li><a href="{{ route('home.index') }}" class="hover:text-yellow-500">Home</a></li>
-                <li><a href="#" class="hover:text-yellow-500">Categories</a></li>
-                <li><a href="{{ route('login.show') }}" class="hover:text-yellow-500">Login</a></li>
-                <li><a href="{{ route('register.show') }}" class="hover:text-yellow-500">Register</a></li>
-            </ul>
-        </div>
-
-        <!-- Social / External Links -->
-        <div>
-            <h2 class="text-xl font-bold mb-4">Follow Us</h2>
-            <ul class="flex space-x-4">
-                <li><a href="https://www.facebook.com" target="_blank" class="hover:text-blue-600">Facebook</a></li>
-                <li><a href="https://www.instagram.com" target="_blank" class="hover:text-pink-500">Instagram</a></li>
-                <li><a href="https://www.twitter.com" target="_blank" class="hover:text-blue-400">Twitter</a></li>
-                <li><a href="https://www.tiktok.com" target="_blank" class="hover:text-black">TikTok</a></li>
-            </ul>
-        </div>
-
+        <nav aria-label="Footer navigation" class="flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-slate-600 sm:justify-end">
+            <a href="{{ route('home.index') }}" class="hover:text-[#245a38]">Home</a>
+            <a href="{{ route('category.index') }}" class="hover:text-[#245a38]">Menu</a>
+            @auth
+                <a href="{{ route('profile.showOrders') }}" class="hover:text-[#245a38]">My orders</a>
+                <a href="{{ route('profile.profilePage') }}" class="hover:text-[#245a38]">Account</a>
+            @else
+                <a href="{{ route('login.show') }}" class="hover:text-[#245a38]">Log in</a>
+                <a href="{{ route('register.show') }}" class="hover:text-[#245a38]">Create account</a>
+            @endauth
+        </nav>
     </div>
-
-    <div class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-500 text-sm">
-        © {{ date('Y') }} Phon Restaurant. All rights reserved.
+    <div class="border-t border-[#f0f2ee] py-4 text-center text-xs text-slate-500">
+        © {{ date('Y') }} Foodify
     </div>
 </footer>
- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-   <!-- أي سكربت إضافي -->
-    @stack('script')
-<livewire:scripts />
+@livewireScripts
+@stack('script')
 </body>
 </html>

@@ -2,90 +2,98 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePaypalPaymentRequest;
 use App\Services\Payment\PaypalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Js;
 
 class PaypalController extends Controller
 {
-    protected PaypalService $paypalService;
-
-    public function __construct(PaypalService $paypalService)
-    {
-        $this->paypalService = $paypalService;
+    public function __construct(
+        protected PaypalService $paypalService
+    ) {
     }
 
-
-    public function createPayment(Request $request): JsonResponse
-    {
-
-        $data = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'product_id' => 'required|exists:products,id',
-        ]);
-
-
-        $user = Auth::user();
-if($user){
-    
+    public function createPayment(
+        CreatePaypalPaymentRequest $request
+    ): JsonResponse {
+        $data = $request->validated();
         $result = $this->paypalService->createPayment(
-            $user['id'],
-            $data['amount'],
-            $data['product_id']
+            (int) $request->user()->getKey(),
+            [[
+                'product_id' => (int) $data['product_id'],
+                'quantity' => (int) $data['quantity'],
+            ]],
+            $data['discount_code'] ?? null,
+            route('paypal.succes'),
+            route('paypal.cance')
         );
 
         return response()->json([
             'status' => 'success',
             'approval_url' => $result['approval_url'],
-            'order_id' => $result['order_id']
+            'paypal_order_id' => $result['paypal_order_id'],
+            'order_id' => $result['order_id'],
+            'amount' => $result['amount'],
+            'discount_amount' => $result['discount_amount'],
+            'currency' => 'USD',
         ]);
-}else{
-    return response()->json([
-        'status' => 'error',
-        'message' => 'Unauthenticated.'
-    ], 401);
-}
     }
 
-    public function paymentSuccess(Request $request):JsonResponse
+    public function paymentSuccess(Request $request): JsonResponse
     {
+        $token = $request->query('token');
+
+        if (! is_string($token) || $token === '') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'PayPal token is required.',
+            ], 422);
+        }
+
         try {
-
             $capture = $this->paypalService->capturePayment(
-                $request->query('token')
+                $token,
+                $request->user() ? (int) $request->user()->getKey() : null
             );
-
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Payment completed',
-                'data' => $capture
+                'data' => $capture,
             ]);
-
-        } catch (\Exception $e) {
-
-            Log::error($e->getMessage());
+        } catch (\Throwable $exception) {
+            Log::error('PayPal capture failed', [
+                'message' => $exception->getMessage(),
+            ]);
 
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage()
+                'message' => 'Payment could not be completed.',
             ], 400);
         }
     }
 
-    public function paymentCancel():JsonResponse
+    public function paymentCancel(Request $request): JsonResponse
     {
-        return response()->json([
-            'status' => 'cancelled'
-        ]);
+        $token = $request->query('token');
+
+        if (is_string($token) && $token !== '') {
+            $this->paypalService->cancelPayment(
+                $token,
+                $request->user() ? (int) $request->user()->getKey() : null
+            );
+        }
+
+        return response()->json(['status' => 'cancelled']);
     }
 
-    public function webhook(Request $request):JsonResponse
+    public function webhook(Request $request): JsonResponse
     {
-        $this->paypalService->handleWebhook($request->all());
+        if (! $this->paypalService->handleWebhook($request)) {
+            return response()->json(['status' => 'invalid_signature'], 403);
+        }
 
         return response()->json(['status' => 'ok']);
     }

@@ -38,15 +38,21 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+        if (Auth::check()) {
+            return redirect()->route(
+                Auth::user()->hasRole('admin') ? 'filament.admin.auth.login' : 'home.index'
+            );
+        }
+
+        $user = User::query()->where('email', $credentials['email'])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password) && $user->hasRole('admin')) {
+            return redirect()->route('filament.admin.auth.login')
+                ->with('error', 'Administrator accounts must sign in through the admin portal.');
+        }
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // حماية من session fixation
-
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
-
-            if ($user->hasRole('admin')) {
-                return redirect()->route('admin.dashboard');
-            }
 
             return redirect()->route('home.index');
         }
@@ -66,8 +72,14 @@ class AuthController extends Controller
             ->with('success', 'Logged out successfully');
     }
 
-    public function showLogin():View
+    public function showLogin():View|RedirectResponse
     {
+        if (Auth::check()) {
+            return redirect()->route(
+                Auth::user()->hasRole('admin') ? 'filament.admin.auth.login' : 'home.index'
+            );
+        }
+
         return view('web.auth.login');
     }
 
@@ -169,4 +181,3 @@ return view('web.auth.new-password', [
     }
 
 }
-

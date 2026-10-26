@@ -4,6 +4,7 @@ namespace App\Http\Controllers\web\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\DiscountService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,10 +21,12 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function profilePage(): View
+    public function profilePage(DiscountService $discountService): View
     {
         $data = $this->userService->getProfile();
-        return view('web.profile.index', compact('data'));
+        $coupons = $discountService->availableCoupons();
+
+        return view('web.profile.index', compact('data', 'coupons'));
     }
 
 

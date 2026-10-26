@@ -17,12 +17,21 @@ class GlobalNotificationMail extends Notification implements ShouldQueue
     protected string $title;
     protected string $body;
     protected ?string $image;
+    protected ?string $actionUrl;
+    protected string $actionLabel;
 
-    public function __construct(string $title, string $body, ?string $image = null)
-    {
+    public function __construct(
+        string $title,
+        string $body,
+        ?string $image = null,
+        ?string $actionUrl = null,
+        string $actionLabel = 'View details'
+    ) {
         $this->title = $title;
         $this->body = $body;
         $this->image = $image;
+        $this->actionUrl = $actionUrl;
+        $this->actionLabel = $actionLabel;
     }
 
     /**
@@ -54,6 +63,10 @@ class GlobalNotificationMail extends Notification implements ShouldQueue
         if ($this->image) {
             $mail->line('شوف الصورة:');
             $mail->action('عرض المنتج', url($this->image));
+        }
+
+        if ($this->actionUrl) {
+            $mail->action($this->actionLabel, $this->actionUrl);
         }
 
         return $mail;

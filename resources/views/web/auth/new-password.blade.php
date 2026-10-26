@@ -1,39 +1,26 @@
-@extends("web.app")
+@extends('web.app')
+
+@section('title', 'Choose a new password | Foodify')
 
 @section('content')
- 
-<div class="container mx-auto h-screen flex-col gap-10   flex items-center justify-center p-4 md:w-[20rem] md:border md:border-green-800 rounded md:h-120">
-<div class="gap-10 flex flex-col">
-    @if ($errors->any())
-        <div class="w-full p-3 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
-            <ul class="list-disc pl-5">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-        <p class="text-[13px] text-start font-semibold justify-start content-start">Create a new password Ensure it differs from<br>previous ones for security</p>
-    <form action="{{ route('update-new-password.submit') }}"  method="POST" class=" flex flex-col  flex-wrap  items-center justify-center  ">
-    @csrf
-     <div class="flex  gap-10 flex-wrap content-start w-full flex-col items-start">
-         <div class="w-full"> <label for="">
-                Password
-            </label>
-            <input type="password" placeholder="Enter Your Password" name="password"
-                class=" w-full border rounded-md p-2 mt-2 outline-none border-[#cfcfcf]">
-        </div>
-        <div class="w-full"> 
-            <label for="">
-                Confirm Password
-            </label>
-            <input type="password" placeholder="Re-enter Your password" name="password_confirmation"
-                class=" w-full border rounded-md p-2 mt-2 outline-none border-[#cfcfcf]">
-              <input type="hidden" name="user_id" value="{{ $userId }}"/>
-        </div>
-        <button class="border-none bg-[#065e21] text-white w-full py-2 rounded-md my-4" type="submit">Continue</button>
-       </div>
-    </form>
-</div>
-</div>
+    <div class="page-container flex justify-center">
+        <section class="surface w-full max-w-md p-5 sm:p-8" aria-labelledby="new-password-heading">
+            <p class="eyebrow">Account recovery</p>
+            <h1 id="new-password-heading" class="section-heading mt-2">Choose a new password</h1>
+            <p class="section-copy">Use a password you haven’t used for this account before.</p>
+            <form action="{{ route('update-new-password.submit') }}" method="POST" class="mt-6 space-y-5">
+                @csrf
+                <div>
+                    <label for="password" class="field-label">New password</label>
+                    <input id="password" type="password" name="password" autocomplete="new-password" required class="w-full px-3.5 py-3">
+                </div>
+                <div>
+                    <label for="password_confirmation" class="field-label">Confirm new password</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required class="w-full px-3.5 py-3">
+                </div>
+                <input type="hidden" name="user_id" value="{{ $userId }}">
+                <button type="submit" class="btn-primary w-full">Save password</button>
+            </form>
+        </section>
+    </div>
 @endsection

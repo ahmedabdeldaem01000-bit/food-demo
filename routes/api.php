@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountQuoteController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\NotificationController;
@@ -33,6 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/home', [ProductController::class, 'topRated']);
 Route::get('/category-page', [ProductController::class, 'CategoryPage']);
 Route::get('/categories/{id}/products', [ProductController::class, 'productsByCategory']);
+Route::post('/paypal/webhook', [PaypalController::class, 'webhook'])
+    ->name('api.paypal.webhook');
+Route::get('/paypal/succes', [PaypalController::class, 'paymentSuccess'])
+    ->name('paypal.succes');
+Route::get('/paypal/cance', [PaypalController::class, 'paymentCancel'])
+    ->name('paypal.cance');
 
 
 // User routes
@@ -40,9 +47,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     Route::post('/paypal/create-payment', [PaypalController::class, 'createPayment']);
-    Route::get('/paypal/succes', [PaypalController::class, 'paymentSuccess'])->name('paypal.succes');
-    Route::get('/paypal/cance', [PaypalController::class, 'paymentCancel'])->name('paypal.cance');
-    Route::post('/paypal/webhook', [PaypalController::class, 'webhook']);
+    Route::post('/discounts/quote', DiscountQuoteController::class)
+        ->name('api.discounts.quote');
     Route::post('/user/fcm-token', [UserController::class, 'storeFcmToken']);
 
 

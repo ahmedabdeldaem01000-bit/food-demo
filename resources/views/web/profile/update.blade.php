@@ -1,80 +1,68 @@
 @extends('web.app')
-@section('page-title')
-    Update profile
-@endsection
+
+@section('title', 'Edit profile | Foodify')
+
 @section('content')
-    <div class="justify-center flex flex-wrap flex-row items-center content-center w-full mt-34">
-        <div class="min-h-screen  bg-gray-100">
+    <div class="page-container max-w-3xl">
+        <a href="{{ route('profile.profilePage') }}" class="text-sm font-semibold text-[#245a38] hover:underline">← Back to account</a>
+        <div class="mb-7 mt-5">
+            <p class="eyebrow">Account details</p>
+            <h1 class="section-heading mt-2">Edit your profile</h1>
+            <p class="section-copy">Keep your contact information up to date.</p>
+        </div>
 
+        @if($errors->any())
+            <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+                <p class="font-semibold">Please review the following:</p>
+                <ul class="mt-2 list-inside list-disc space-y-1">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <!-- Profile Card -->
-            <div class="max-w-sm mx-auto -mt-12 bg-white rounded-2xl shadow p-6">
+        <form action="{{ route('profile.personalEdit') }}" method="POST" enctype="multipart/form-data" class="surface space-y-5 p-5 sm:p-8">
+            @csrf
+            @method('PUT')
 
-                <!-- Avatar -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset(auth()->user()->photo?? asset('images/default.png')) }}"
-                        class="w-24 h-24 rounded-full object-cover border-4 border-white shadow">
-
-                    <h3 class="mt-3 text-lg font-semibold">
-                        {{ auth()->user()->name }}
-                    </h3>
+            <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                    <label for="name" class="field-label">Full name</label>
+                    <input id="name" type="text" name="name" value="{{ old('name', auth()->user()->name) }}" autocomplete="name" required class="w-full px-3.5 py-3">
+                    @error('name')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
                 </div>
-   @if ($errors->any())
-      <div class="w-full p-3 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
-          <ul class="list-disc pl-5">
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-  @endif
-                <!-- Form -->
-                <form action="{{ route('profile.personalEdit') }}" method="POST" enctype="multipart/form-data"
-                    class="mt-6 space-y-4">
-                    @csrf
-                    @method('PUT')
-
-                    <div>
-                        <label class="text-sm text-gray-600">Name</label>
-                        <input type="text" name="name" value="{{ auth()->user()->name }}"
-                            class="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
-                    </div>
-
-                    <div>
-                        <label class="text-sm text-gray-600">Email</label>
-                        <input type="email" name="email" value="{{ auth()->user()->email }}"
-                            class="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Phone</label>
-                        <input type="text" name="phone" value="{{ auth()->user()->phone }}"
-                            class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-green-600">
-                    </div>
-
-                    <div>
-                        <label class="text-sm text-gray-600">Birth Date</label>
-                        <input type="date" name="birth_date" value="{{ auth()->user()->birth_date }}"
-                            class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-green-600">
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Address</label>
-                        <textarea name="address" rows="3"
-                            class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-green-600">{{ auth()->user()->address }}</textarea>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Profile Image</label>
-                        <input type="file" name="photo" class="w-full mt-1 p-2 border rounded-lg">
-                    </div>
-
-                    <button
-                        class="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition">
-                        Update Profile
-                    </button>
-
-                </form>
-
+                <div>
+                    <label for="email" class="field-label">Email address</label>
+                    <input id="email" type="email" name="email" value="{{ old('email', auth()->user()->email) }}" autocomplete="email" required class="w-full px-3.5 py-3">
+                    @error('email')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="phone" class="field-label">Phone number</label>
+                    <input id="phone" type="tel" name="phone" value="{{ old('phone', auth()->user()->phone) }}" autocomplete="tel" required class="w-full px-3.5 py-3">
+                    @error('phone')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="birth_date" class="field-label">Date of birth</label>
+                    <input id="birth_date" type="date" name="birth_date" value="{{ old('birth_date', auth()->user()->birth_date) }}" required class="w-full px-3.5 py-3">
+                    @error('birth_date')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
+                </div>
+                <div class="sm:col-span-2">
+                    <label for="address" class="field-label">Address</label>
+                    <textarea id="address" name="address" rows="3" autocomplete="street-address" required class="w-full px-3.5 py-3">{{ old('address', auth()->user()->address) }}</textarea>
+                    @error('address')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
+                </div>
+                <div class="sm:col-span-2">
+                    <label for="photo" class="field-label">Profile photo <span class="font-normal text-slate-500">(optional)</span></label>
+                    <input id="photo" type="file" name="photo" accept="image/*" class="w-full rounded-xl border border-[#d9e0da] bg-white px-3 py-2.5 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-[#edf4e9] file:px-3 file:py-2 file:font-semibold file:text-[#245a38]">
+                    @error('photo')<p class="mt-1 text-sm text-red-700">{{ $message }}</p>@enderror
+                </div>
             </div>
 
-        </div>
+            <div class="flex flex-col-reverse gap-3 border-t border-[#e7ebe5] pt-5 sm:flex-row sm:justify-end">
+                <a href="{{ route('profile.profilePage') }}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">Save changes</button>
+            </div>
+        </form>
     </div>
 @endsection

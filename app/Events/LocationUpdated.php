@@ -18,14 +18,17 @@ class LocationUpdated implements ShouldBroadcast
     // latitude
     // longitude
     public $longitude;
+    public $room_id;
+
     /**
      * Create a new event instance.
      */
-    public function __construct($userId,$latitude,$longitude)
+    public function __construct($userId,$latitude,$longitude,$room_id)
     {
         $this->userId = $userId;
         $this->latitude = $latitude;
         $this->longitude = $longitude;
+        $this->room_id = $room_id;
     }
     
 
@@ -37,7 +40,7 @@ class LocationUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('location-tracking'),
+            new PrivateChannel('location-tracking.' . $this->room_id),
         ];
     }
     public function broadcastAs(): string
@@ -50,6 +53,7 @@ class LocationUpdated implements ShouldBroadcast
             'userId' => $this->userId,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
+            'room_id' => $this->room_id,
         ];
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\web\cart\CartController;
 use App\Http\Controllers\web\category\CategoryController;
 use App\Http\Controllers\web\Favorite\FavoriteController;
 use App\Http\Controllers\web\Home\ProductController;
+use App\Http\Controllers\web\DiscountController;
 use App\Models\User;
 use App\Notifications\ProductNotification;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +28,6 @@ Route::controller(AuthController::class)->group(function () {
     // ================= Guest Only =================
     Route::middleware('guest')->group(function () {
 
-        Route::get('login', 'showLogin')->name('login.show');
         Route::get('register', 'showRegister')->name('register.show');
 
         Route::get('show-otp', 'showOtp')->name('otp.showOtp');
@@ -57,9 +57,12 @@ Route::controller(AuthController::class)->group(function () {
 
 });
 
+Route::get('login', [AuthController::class, 'showLogin'])->name('login.show');
 
 Route::get('home', [ProductController::class, 'index'])->name('home.index');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product.show');
+Route::post('/paypal/webhook', [\App\Http\Controllers\web\payment\PaypalController::class, 'webhook'])
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
 
 
 Route::middleware('auth')->group(function () {
@@ -76,11 +79,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart-remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::get('get-cart', [CartController::class, 'index'])->name('get-cart.index');
+    Route::post('/discount/apply', [DiscountController::class, 'apply'])->name('discount.apply');
+    Route::delete('/discount/remove', [DiscountController::class, 'remove'])->name('discount.remove');
     Route::post('/paypal/create-payment', [PaypalController::class, 'createPayment'])->name('paypal.createPayment');
     Route::get('/paypal/success', [PaypalController::class, 'paymentSuccess'])->name('paypal.success');
     Route::get('/payment/already_done', [PaypalController::class, 'alreadyDone'])->name('paypal.alreadyDone');
     Route::get('/paypal/cancel', [PaypalController::class, 'paymentCancel'])->name('paypal.cancel');
-    Route::post('/paypal/webhook', [PaypalController::class, 'webhook']);
     Route::post('/user/fcm-token', [UserController::class, 'storeFcmToken']);
     Route::get('/notification', [NotificationController::class, 'index'])->name('notification.index');
     Route::get('/tracking', [LocationController::class, 'index'])->name('location.index');

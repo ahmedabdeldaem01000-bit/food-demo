@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Filament\Notifications\DatabaseNotification;
+use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,10 +15,15 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    /** @use HasFactory<UserFactory> */
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $panel->getId() === 'admin' && $this->hasAnyRole(['admin', 'employee']);
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -57,40 +64,37 @@ class User extends Authenticatable
         ];
     }
 
-   /**
- * @return BelongsTo<Role, $this>
- */
-public function role(): BelongsTo
-{
-    return $this->belongsTo(Role::class);
-}
+    /**
+     * @return BelongsTo<Role, $this>
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
 
-/**
- * @return HasMany<Order, $this>
- */
-public function order(): HasMany
-{
-    return $this->hasMany(Order::class);
-}
+    /**
+     * @return HasMany<Order, $this>
+     */
+    public function order(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
 
-/**
- * @return BelongsToMany<Product, $this, Favorite>
- */
-public function favorites(): BelongsToMany
-{
-    return $this->belongsToMany(Product::class, 'favorites')
-        ->using(Favorite::class)
-        ->withTimestamps();
-}
+    /**
+     * @return BelongsToMany<Product, $this, Favorite>
+     */
+    public function favorites(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'favorites')
+            ->using(Favorite::class)
+            ->withTimestamps();
+    }
 
-/**
- * @return HasMany<Cart, $this>
- */
-public function cart(): HasMany 
-{
-    return $this->hasMany(Cart::class);
-}
- 
-
- 
+    /**
+     * @return HasMany<Cart, $this>
+     */
+    public function cart(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

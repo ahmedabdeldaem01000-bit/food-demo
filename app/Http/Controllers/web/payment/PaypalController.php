@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\web\Payment;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Cart;
 use App\Services\Payment\PaypalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -25,7 +25,7 @@ class PaypalController extends Controller
     {
         $userId = auth()->id();
 
-        $cart = \App\Models\Cart::with('product')
+        $cart = Cart::query()
             ->where('user_id', $userId)
             ->get();
 
@@ -33,30 +33,20 @@ class PaypalController extends Controller
             return redirect()->back()->with('error', 'Your cart is empty.');
         }
 
-        $totalAmount = round($cart->sum(function ($item) {
-            return ($item->product->price ?? 0) * $item->quantity;
-        }), 2);
-
-        // نمرر أول منتج كـ example، لو عندك أكثر من منتج ممكن تعدل حسب الـ OrderItems
-        $productId = $cart->first()->product->id ?? 0;
-        // استخدام الـ Service لإنشاء الدفع وربط الأوردر
-
-        $paypalData = $this->paypalService->createPayment($userId, $totalAmount, $productId);
-        // dd($paypalData);/
-        // إنشاء OrderItems بعد إنشاء الأوردر (optional)
-        foreach ($cart as $item) {
-            \App\Models\OrderItem::create([
-                'order_id' => $paypalData['order_id'],
-                'product_id' => $item->product->id ?? null,
+        $paypalData = $this->paypalService->createPayment(
+            $userId,
+            $cart->map(fn (Cart $item): array => [
+                'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
-                'price' => $item->product->price ?? 0,
-            ]);
-        }
+            ])->all(),
+            session('discount_code')
+        );
 
         return redirect($paypalData['approval_url']);
     }
     public function paymentSuccess(Request $request): View|RedirectResponse
 {
+
     try {
         $token = $request->query('token');
         if (!$token) {
@@ -64,7 +54,10 @@ class PaypalController extends Controller
         }
 
         // جلب الأوردر من token
-        $order = \App\Models\Order::where('paypal_order_id', $token)->firstOrFail();
+        $order = \App\Models\Order::query()
+            ->where('paypal_order_id', $token)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
         // لو الأوردر متدفع قبل كده
         if ($order->status === 'completed') {
@@ -72,12 +65,13 @@ class PaypalController extends Controller
         }
 
         // تنفيذ capture لأول مرة
-        $capture = $this->paypalService->capturePayment($token);
+        $this->paypalService->capturePayment($token, (int) auth()->id());
 
         // مسح الكارت بعد الدفع
         \App\Models\Cart::where('user_id', auth()->id())->delete();
+        $request->session()->forget('discount_code');
 
-        return view('web.payment.success', ['payment' => $capture]);
+      return redirect()->route('home.index');
 
     } catch (\Exception $e) {
         Log::error('PayPal capture failed', [
@@ -87,20 +81,28 @@ class PaypalController extends Controller
         return view('web.payment.failed');
     }
 }
-    public function paymentCancel(): JsonResponse //118
+    public function paymentCancel(Request $request): JsonResponse //118
     {
+        $token = $request->query('token');
+
+        if (is_string($token) && $token !== '') {
+            $this->paypalService->cancelPayment($token, (int) auth()->id());
+        }
+
         return response()->json([
             'status' => 'cancelled'
         ]);
     }
     public function alreadyDone(): View //118
     {
-return view('web.home');
+return view('web.payment.success');
     }
 
-    public function webhook(Request $request): JsonResponse //125
+    public function webhook(Request $request): JsonResponse
     {
-        $this->paypalService->handleWebhook($request->all());
+        if (! $this->paypalService->handleWebhook($request)) {
+            return response()->json(['status' => 'invalid_signature'], 403);
+        }
 
         return response()->json(['status' => 'ok']);
     }

@@ -1,40 +1,36 @@
 @extends('web.app')
+
+@section('title', 'Log in | Foodify')
+
 @section('content')
+    <div class="page-container flex justify-center">
+        <div class="w-full max-w-md">
+            <div class="mb-6 text-center">
+                <p class="eyebrow">Welcome back</p>
+                <h1 class="section-heading mt-2">Log in to Foodify</h1>
+                <p class="section-copy">Sign in to manage your cart and orders.</p>
+            </div>
 
-<div class="w-full flex flex-wrap flex-row justify-center items-center content-center mt-32  ">
-    <form action="{{ route('login.submit') }}" method="POST" class="p-4 flex flex-col flex-wrap content-center justify-center w-full items-start md:w-100 md:border md:border-green-800 md:rounded-[15px] md:justify-between  md:h-100 md:p-8">
-  @csrf
-   @if ($errors->any())
-      <div class="w-full p-3 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
-          <ul class="list-disc pl-5">
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-  @endif
-
-  <div class="p-2 flex flex-col flex-wrap justify-center items-start w-full">
-      <label for="email" class="font-500">Email</label>
-      <input type="email" placeholder="Enter Your Email" name="email" value="{{ old('email') }}" class="w-full border rounded-md p-2 mt-2 outline-none border-[#cfcfcf]">
-  </div>
-  
-  <div class="p-2 flex flex-col flex-wrap items-start w-full">
-      <label for="password" class="font-500">Password</label>
-      <input type="password" name="password" class="w-full border rounded-md p-2 mt-2 outline-none border-[#cfcfcf]" placeholder="Enter Your Password">
-  </div>
-  
-  <div class="text-xs flex justify-between flex-row flex-wrap items-center w-full p-2">
-      <div class="">
-          <input type="checkbox" name="remember">
-          <label for="remember">Remember me</label>
-      </div>
-      <a href="{{ route('forget-password.show') }}" class="text-red-500 font-semibold">Forget your Password?</a>
-  </div>
-  
-  <button type="submit" class="border-none bg-[#065e21] text-white w-full py-2 rounded-md my-4">Login</button>
-  <a href="{{ route('register.show') }}" class="text-center w-full">Don't have an account? <span class="underline text-red-600 font-bold">Sign up</span></a>
-</form>
-</div>
-
-@endsection()
+            <form action="{{ route('login.submit') }}" method="POST" class="surface space-y-5 p-5 sm:p-8">
+                @csrf
+                <div>
+                    <label for="email" class="field-label">Email address</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" autocomplete="email" required autofocus class="w-full px-3.5 py-3">
+                </div>
+                <div>
+                    <label for="password" class="field-label">Password</label>
+                    <input id="password" type="password" name="password" autocomplete="current-password" required class="w-full px-3.5 py-3">
+                </div>
+                <div class="flex items-center justify-between gap-3 text-sm">
+                    <label for="remember" class="inline-flex items-center gap-2 text-slate-600">
+                        <input id="remember" type="checkbox" name="remember" value="1" class="h-4 w-4 rounded border-slate-300 accent-[#245a38]">
+                        Remember me
+                    </label>
+                    <a href="{{ route('forget-password.show') }}" class="font-semibold text-[#245a38] hover:underline">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-primary w-full">Log in</button>
+                <p class="text-center text-sm text-slate-600">New to Foodify? <a href="{{ route('register.show') }}" class="font-semibold text-[#245a38] hover:underline">Create an account</a></p>
+            </form>
+        </div>
+    </div>
+@endsection

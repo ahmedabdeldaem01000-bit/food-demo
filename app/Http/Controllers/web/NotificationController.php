@@ -15,10 +15,13 @@ class NotificationController extends Controller
     {
         $userId = auth()->id();
         if(!$userId) {
-            return redirect()->route('login');
+            return redirect()->route('login.show');
         }
 
-        $notifications = \App\Models\Notification::latest()->paginate(10);
+        $notifications = Notification::query()
+            ->where('notifiable_id', (string) $userId)
+            ->latest()
+            ->paginate(10);
 
         $readIds = \App\Models\NotificationRead::where('user_id', $userId)
             ->pluck('notification_id')
@@ -31,11 +34,17 @@ class NotificationController extends Controller
     {
         $user = auth()->user();
         if(!$user){
-            return redirect()->route('login');
+            return redirect()->route('login.show');
         }
+
+        $notification = Notification::query()
+            ->whereKey($id)
+            ->where('notifiable_id', (string) $user->getKey())
+            ->firstOrFail();
+
         NotificationRead::firstOrCreate([
             'user_id' => $user->id,
-            'notification_id' => $id,
+            'notification_id' => $notification->getKey(),
         ], [
             'read_at' => now()
         ]);

@@ -17,6 +17,7 @@ class Payment extends Model
         'status',
         'amount',
         'currency',
+        'paypal_capture_id',
     ];
 
        /**
