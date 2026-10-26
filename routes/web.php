@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(AuthController::class)->group(function () {
 
     // ================= Public =================
-    Route::get('home', 'home')->name('home.index');
+    // Route::get('home', 'home')->name('home.index');
 
     // ================= Auth Actions =================
     Route::post('login', 'login')->name('login.submit');
@@ -59,7 +59,11 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::get('login', [AuthController::class, 'showLogin'])->name('login.show');
 
-Route::get('home', [ProductController::class, 'index'])->name('home.index');
+Route::get('/', [ProductController::class, 'index'])->name('home');
+
+Route::get('/home', [ProductController::class, 'index'])
+    ->name('home.index');
+
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product.show');
 Route::post('/paypal/webhook', [\App\Http\Controllers\web\payment\PaypalController::class, 'webhook'])
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
